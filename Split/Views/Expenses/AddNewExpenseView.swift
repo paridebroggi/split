@@ -92,7 +92,12 @@ struct AddNewExpenseView: View {
         }
       }
       .onAppear {
-        payer = currentTeam.members.first(where: {$0.isUser == true})!.name
+        if let user = currentTeam.members.first(where: {$0.isUser == true}) {
+          payer = user.name
+        }
+        else if let member = currentTeam.members.first {
+          payer = member.name
+        }
         category = String("Food")
         currency = "€"
         focusedField = .title
