@@ -20,7 +20,7 @@ struct ExpenseRowView: View {
                 Text(expense.title)
                     .font(.headline)
                 Spacer()
-                Text("\(expense.amount, specifier: "%.2f") \(expense.currency)")
+              Text("\(expense.amount, specifier: "%.2f") \(expense.currency.symbol)")
                     .font(.headline)
             }
             

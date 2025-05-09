@@ -14,6 +14,12 @@ struct AddNewExpenseView: View {
   @Environment(\.dismiss) private var dismiss
   
   let currentTeam: Team
+  let formatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.locale = .current
+    return formatter
+  }()
   
   @State private var showError: Bool = false
   @State private var errorMessage = String()
@@ -25,17 +31,19 @@ struct AddNewExpenseView: View {
   @State private var payer = String()
   @State private var category = String("Food")
   @State private var currency = Locale.current.currency?.identifier ?? "EUR"
-  @State private var splittingRate: Double = 50.0
+  @State private var splittingRate = String()
   @State private var date: Date = Date()
+  @State private var showConversionRateField = false
+  @State private var convertiongRate = String(1)
   
   private let categories: [String] = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Travel", "Health", "Other"]
   
   enum FocusedField: Int, CaseIterable {
-    case title, amount
+    case title, amount, splittingRate
   }
   
   var body: some View {
-  
+    
     NavigationView {
       Form {
         Section {
@@ -52,12 +60,15 @@ struct AddNewExpenseView: View {
           TextField("Amount", text: $amount)
             .focused($focusedField, equals: .amount)
             .keyboardType(.decimalPad)
+            .onSubmit {
+                print("asdasdasdasdsadasdsa")
+            }
         }
         
         Section {
-          Picker("Currency", selection: $currency) {
-            ForEach(Currency.getAllCurrencies()){ currency in
-              Text("\(currency.name) -- \(currency.code) (\(currency.symbol))").tag(currency.code)
+          Picker("Payer", selection: $payer) {
+            ForEach(currentTeam.members, id: \.self){ member in
+              Text(member.name).tag(member.name)
             }
           }
         }
@@ -71,11 +82,27 @@ struct AddNewExpenseView: View {
         }
         
         Section {
-          Picker("Payer", selection: $payer) {
-            ForEach(currentTeam.members, id: \.self){ member in
-              Text(member.name).tag(member.name)
+          TextField("Splitting rate", text: $splittingRate)
+            .focused($focusedField, equals: .splittingRate)
+            .keyboardType(.decimalPad)
+        }
+        
+        Section {
+          Picker("Currency", selection: $currency) {
+            ForEach(Money.getAllCurrencies()){ currency in
+              Text(currency.code).tag(currency.code)
             }
           }
+          .onChange(of: currency){
+            showConversionRateField = currency != currentTeam.defaultCurrency.code
+          }
+          
+          if showConversionRateField == true {
+            withAnimation() {
+              TextField("Convertion Rate", text: $convertiongRate)
+            }
+          }
+          
         }
         
         Section {
@@ -83,14 +110,8 @@ struct AddNewExpenseView: View {
             .datePickerStyle(.compact)
         }
         
-        Section(header: Text("Splitting rate")) {
-          VStack {
-            Text("\(Int(splittingRate))%")
-              .font(.headline)
-            Slider(value: $splittingRate, in: 0...100, step: 1)
-          }
-        }
       }
+      .animation(.default, value: showConversionRateField)
       .onAppear {
         if let user = currentTeam.members.first(where: {$0.isUser == true}) {
           payer = user.name
@@ -99,18 +120,18 @@ struct AddNewExpenseView: View {
           payer = member.name
         }
         category = String("Food")
-        currency = currentTeam.defaultCurrency
+        currency = currentTeam.defaultCurrency.code
         focusedField = .title
       }
       .navigationTitle("New Expense")
       .navigationBarTitleDisplayMode(.inline)
       .navigationBarItems(
-          leading: Button("Cancel") {
-              dismiss()
-          },
-          trailing: Button("Done") {
-            saveExpense()
-          }
+        leading: Button("Cancel") {
+          dismiss()
+        },
+        trailing: Button("Done") {
+          saveExpense()
+        }
           .font(.headline)
           .disabled(title.isEmpty || amount.isEmpty)
       )
@@ -147,8 +168,8 @@ extension AddNewExpenseView {
       amount: amountValue,
       title: title,
       member: currentTeam.members.first(where: { $0.name == payer })!,
-      currency: currency,
-      splittingRate: splittingRate,
+      currency: Money.retrieveCurrency(code: currency),
+      splittingRate: Double(splittingRate)!,
       category: category
     )
     

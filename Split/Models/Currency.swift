@@ -6,31 +6,49 @@
 //
 
 import Foundation
+import SwiftData
 
-struct Currency: Identifiable {
+
+struct Money: Codable, Identifiable {
   
-  var id: String { code }
-  let code: String
-  let name: String
-  let symbol: String
+  var id = UUID()
+  var code: String
+  var name: String
+  var symbol: String
   
-  static func getAllCurrencies() -> [Currency] {
+  init(code: String, name: String, symbol: String) {
+    self.code = code
+    self.name = name
+    self.symbol = symbol
+  }
+  
+  init() {
+    self.code = "EUR"
+    self.name = "Euro"
+    self.symbol = "E"
+  }
+  
+  static func getAllCurrencies() -> [Money] {
     
-    let formatter = NumberFormatter()
     let locale = Locale.current
-    var currencies = [Currency]()
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.locale = locale
+    var currencies = [Money]()
     
     Locale.commonISOCurrencyCodes.forEach { code in
       
-      formatter.numberStyle = .currency
       formatter.currencyCode = code
-      formatter.locale = locale
       
       if let name = locale.localizedString(forCurrencyCode: code),
          let symbol = formatter.currencySymbol {
-        currencies.append(Currency(code: code, name: name, symbol: symbol))
+        currencies.append(Money(code: code, name: name, symbol: symbol))
       }
     }
     return currencies
+  }
+  
+  static func retrieveCurrency(code: String) -> Money {
+    return getAllCurrencies().first(where: { $0.code == code })!
   }
 }

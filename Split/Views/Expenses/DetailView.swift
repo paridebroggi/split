@@ -15,7 +15,7 @@ struct ExpenseDetailView: View {
     var body: some View {
         Form {
             Section(header: Text("Amount")) {
-                Text("\(expense.amount, specifier: "%.2f") \(expense.currency)")
+              Text("\(expense.amount, specifier: "%.2f") \(expense.currency.symbol)")
             }
             
             Section(header: Text("Title")) {
