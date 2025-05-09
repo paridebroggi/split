@@ -14,11 +14,11 @@ struct AddNewTeamView: View {
   @Environment(\.dismiss) private var dismiss
   
   @State private var teamName = String()
-  @State private var defaultCurrency = "€"
+  @State private var defaultCurrency = "EUR"
   @State private var showError = false
   @State private var errorMessage = ""
-  @State private var currency = "€"
-  @State private var presentNewPersonView = false
+  @State private var currency = "EUR"
+  @State private var presentNewMemberView = false
   @State private var presentImagePicker = false
   @State private var isShareEnabled = false
   @FocusState private var focusedField: FocusedField?
@@ -27,7 +27,7 @@ struct AddNewTeamView: View {
     case teamName
   }
   
-  private let currencies = ["$", "€", "£", "¥"]
+  private let currencies = ["$", "EUR", "£", "¥"]
   
   let teams: [Team]
   let team = Team()
@@ -46,11 +46,11 @@ struct AddNewTeamView: View {
         }
         
         Section("Members"){
-          ForEach(team.members) { person in
-            Text(person.name)
+          ForEach(team.members) { member in
+            Text(member.name)
           }
           Button {
-            presentNewPersonView = true
+            presentNewMemberView = true
           } label: {
             HStack{
               Image(systemName: "plus.circle.fill")
@@ -90,8 +90,8 @@ struct AddNewTeamView: View {
           .font(.headline)
           .disabled(teamName.isEmpty || team.members.isEmpty)
       )
-      .sheet(isPresented: $presentNewPersonView) {
-        AddNewPersonView(team: team)
+      .sheet(isPresented: $presentNewMemberView) {
+        AddNewMemberView(team: team)
       }
     }
   }

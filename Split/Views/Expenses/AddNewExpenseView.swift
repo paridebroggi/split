@@ -24,11 +24,10 @@ struct AddNewExpenseView: View {
   @State private var title = String()
   @State private var payer = String()
   @State private var category = String("Food")
-  @State private var currency = "€"
+  @State private var currency = Locale.current.currency?.identifier ?? "EUR"
   @State private var splittingRate: Double = 50.0
   @State private var date: Date = Date()
   
-  private let currencies = ["$", "€", "£", "¥"]
   private let categories: [String] = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Travel", "Health", "Other"]
   
   enum FocusedField: Int, CaseIterable {
@@ -36,6 +35,7 @@ struct AddNewExpenseView: View {
   }
   
   var body: some View {
+  
     NavigationView {
       Form {
         Section {
@@ -55,6 +55,14 @@ struct AddNewExpenseView: View {
         }
         
         Section {
+          Picker("Currency", selection: $currency) {
+            ForEach(Currency.getAllCurrencies()){ currency in
+              Text("\(currency.name) -- \(currency.code) (\(currency.symbol))").tag(currency.code)
+            }
+          }
+        }
+        
+        Section {
           Picker("Category", selection: $category) {
             ForEach(categories, id: \.self) { category in
               Text(category).tag(category)
@@ -64,8 +72,8 @@ struct AddNewExpenseView: View {
         
         Section {
           Picker("Payer", selection: $payer) {
-            ForEach(currentTeam.members, id: \.self){ person in
-              Text(person.name).tag(person.name)
+            ForEach(currentTeam.members, id: \.self){ member in
+              Text(member.name).tag(member.name)
             }
           }
         }
@@ -73,14 +81,6 @@ struct AddNewExpenseView: View {
         Section {
           DatePicker("Date", selection: $date, displayedComponents: [.date, .hourAndMinute])
             .datePickerStyle(.compact)
-        }
-        
-        Section {
-          Picker("Currency", selection: $currency) {
-            ForEach(currencies, id: \.self){ currency in
-              Text(currency).tag(currency)
-            }
-          }
         }
         
         Section(header: Text("Splitting rate")) {
@@ -99,7 +99,7 @@ struct AddNewExpenseView: View {
           payer = member.name
         }
         category = String("Food")
-        currency = "€"
+        currency = currentTeam.defaultCurrency
         focusedField = .title
       }
       .navigationTitle("New Expense")
@@ -124,6 +124,7 @@ struct AddNewExpenseView: View {
 }
 
 
+
 extension AddNewExpenseView {
   
   private func goToNextField(offset: Int) {
@@ -145,7 +146,7 @@ extension AddNewExpenseView {
       date: date,
       amount: amountValue,
       title: title,
-      person: currentTeam.members.first(where: { $0.name == payer })!,
+      member: currentTeam.members.first(where: { $0.name == payer })!,
       currency: currency,
       splittingRate: splittingRate,
       category: category

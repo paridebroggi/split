@@ -10,15 +10,15 @@ import SwiftData
 
 @main
 struct SplitApp: App {
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-        .modelContainer(for: [
-                            Team.self,
-                            Expense.self,
-                            Person.self
-                        ])
+  
+  var body: some Scene {
+    WindowGroup {
+      ContentView()      
     }
+    .modelContainer(for: [
+      Team.self,
+      Expense.self,
+      Member.self
+    ])
+  }
 }

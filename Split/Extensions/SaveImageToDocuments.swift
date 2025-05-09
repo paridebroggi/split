@@ -19,7 +19,8 @@ extension SplitApp {
     do {
       try data.write(to: url)
       return url
-    } catch {
+    }
+    catch {
       print("Failed to save image:", error)
       return nil
     }

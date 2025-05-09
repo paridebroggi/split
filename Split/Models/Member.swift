@@ -1,5 +1,5 @@
 //
-//  Person.swift
+//  Member.swift
 //  Split
 //
 //  Created by p on 29/04/2025.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Person {
+final class Member {
   var id = UUID()
   var name = String()
   var isUser: Bool = false

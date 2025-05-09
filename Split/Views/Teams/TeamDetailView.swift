@@ -15,11 +15,11 @@ struct TeamDetailView: View {
   let team: Team
   
   @State private var name = ""
-  @State private var defaultCurrency = "€"
+  @State private var defaultCurrency = "EUR"
   @State private var showError = false
   @State private var errorMessage = ""
   
-  private let currencies = ["$", "€", "£", "¥"]
+  private let currencies = ["$", "EUR", "£", "¥"]
   
   var body: some View {
     
@@ -32,8 +32,8 @@ struct TeamDetailView: View {
       }
       
       Section("Members"){
-        ForEach(team.members) { person in
-          Text(person.name)
+        ForEach(team.members) { member in
+          Text(member.name)
         }
         Button {
           print("add memebrs")

@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct TeamRowView: View {
-    let team: Team
-    @State private var isCurrentTeam = false
+  
     
-    var body: some View {
+  let team: Team
+
+  var body: some View {
         HStack {
             if team.isCurrent {
                 Image(systemName: "checkmark")

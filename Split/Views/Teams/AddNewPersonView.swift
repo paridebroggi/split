@@ -1,5 +1,5 @@
 //
-//  AddNewPersonView.swift
+//  AddNewMemberView.swift
 //  Split
 //
 //  Created by p on 07/05/2025.
@@ -9,17 +9,18 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 
-struct AddNewPersonView: View {
+struct AddNewMemberView: View {
   
   @Environment(\.modelContext) var context
   @Environment(\.dismiss) var dismiss
   
   let team: Team
-  let person = Person(name: "", isUser: false, profileImage: "", balance: 0)
+  let member = Member(name: "gennaro", isUser: false, profileImage: "genny", balance: 0)
   
   @State private var name: String = String()
   @State private var pickedImage: PhotosPickerItem?
   @State private var profileImage: UIImage?
+  @State private var profileImageString = String()
   @State private var presentImagePicker = false
   @State private var selectedEmoji: String?
   
@@ -63,7 +64,7 @@ struct AddNewPersonView: View {
               selectedEmoji = nil
             }) {
               Image(systemName: "xmark.circle.fill")
-                .foregroundColor(.red)
+                .foregroundColor(.secondary)
                 .background(Color.white)
                 .clipShape(Circle())
             }
@@ -110,7 +111,7 @@ struct AddNewPersonView: View {
           dismiss()
         },
         trailing: Button("Done") {
-          savePerson()
+          saveMember()
         }
           .disabled(name.isEmpty && selectedEmoji == nil && profileImage == nil)
       )
@@ -122,16 +123,20 @@ struct AddNewPersonView: View {
         if let data = try? await pickedImage?.loadTransferable(type: Data.self),
            let uiImage = UIImage(data: data) {
           profileImage = uiImage
-          person.profileImage = SplitApp.saveImageToDocuments(image: uiImage)?.absoluteString ?? ""
+          profileImageString = SplitApp.saveImageToDocuments(image: uiImage)?.absoluteString ?? "sooka"
         }
       }
     }
   }
+}
+
+extension AddNewMemberView {
+
   
-  private func savePerson() {
-    // Here you would handle saving the image/emoji to your data model
-    // This is a placeholder for the actual implementation
-    team.members = [person]
+  private func saveMember() {
+    member.name = name
+    member.profileImage = profileImageString
+    team.members.append(member)
     dismiss()
   }
 }

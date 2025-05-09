@@ -29,7 +29,7 @@ struct ImageViewWithPicker: View {
           Image(systemName: "photo.badge.plus")
             .font(.title)
             .frame(height: 120)
-          }
+        }
         Spacer()
       }
       
@@ -41,13 +41,12 @@ struct ImageViewWithPicker: View {
       }
     }
     .photosPicker(isPresented: $presentImagePicker, selection: $pickedImage, matching: .images)
-    
     .onChange(of: pickedImage) {
       Task {
         if let data = try? await pickedImage?.loadTransferable(type: Data.self),
            let uiImage = UIImage(data: data) {
           teamImage = uiImage
-          team.coverImage = SplitApp.saveImageToDocuments(image: uiImage)?.absoluteString ?? ""
+          team.coverImage = SplitApp.saveImageToDocuments(image: uiImage)?.absoluteString ?? "sooka"
         }
       }
     }
