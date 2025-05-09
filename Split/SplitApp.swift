@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct ExpensesApp: App {
+struct SplitApp: App {
     
     var body: some Scene {
         WindowGroup {
