@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 
-struct Money: Codable, Identifiable {
+struct Currency: Codable, Identifiable {
   
   var id = UUID()
   var code: String
@@ -28,13 +28,13 @@ struct Money: Codable, Identifiable {
     self.symbol = "E"
   }
   
-  static func getAllCurrencies() -> [Money] {
+  static func getAllCurrencies() -> [Currency] {
     
     let locale = Locale.current
     let formatter = NumberFormatter()
     formatter.numberStyle = .currency
     formatter.locale = locale
-    var currencies = [Money]()
+    var currencies = [Currency]()
     
     Locale.commonISOCurrencyCodes.forEach { code in
       
@@ -42,13 +42,13 @@ struct Money: Codable, Identifiable {
       
       if let name = locale.localizedString(forCurrencyCode: code),
          let symbol = formatter.currencySymbol {
-        currencies.append(Money(code: code, name: name, symbol: symbol))
+        currencies.append(Currency(code: code, name: name, symbol: symbol))
       }
     }
     return currencies
   }
   
-  static func retrieveCurrency(code: String) -> Money {
+  static func retrieveCurrency(code: String) -> Currency {
     return getAllCurrencies().first(where: { $0.code == code })!
   }
 }

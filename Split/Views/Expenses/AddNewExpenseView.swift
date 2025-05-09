@@ -89,7 +89,7 @@ struct AddNewExpenseView: View {
         
         Section {
           Picker("Currency", selection: $currency) {
-            ForEach(Money.getAllCurrencies()){ currency in
+            ForEach(Currency.getAllCurrencies()){ currency in
               Text(currency.code).tag(currency.code)
             }
           }
@@ -168,7 +168,7 @@ extension AddNewExpenseView {
       amount: amountValue,
       title: title,
       member: currentTeam.members.first(where: { $0.name == payer })!,
-      currency: Money.retrieveCurrency(code: currency),
+      currency: Currency.retrieveCurrency(code: currency),
       splittingRate: Double(splittingRate)!,
       category: category
     )

@@ -56,7 +56,7 @@ final class SampleData {
     let jane = Member(name: "Jane", isUser: false, profileImage: String(), balance: -34.5)
     
     
-    let teamCuccia = Team(name: "Animals", isCurrent: true, members: [mimmo,jane], expenses: [], sharingCode: "code", coverImage: String( "https://www.purina.it/sites/default/files/styles/ttt_image_original/public/2021-11/cane-e-gatto-una-convivenza-felice.webp?itok=_NoVS8I7"), defaultCurrency: Money(code: "EUR", name: "Euro", symbol: "€"))
+    let teamCuccia = Team(name: "Animals", isCurrent: true, members: [mimmo,jane], expenses: [], sharingCode: "code", coverImage: String( "https://www.purina.it/sites/default/files/styles/ttt_image_original/public/2021-11/cane-e-gatto-una-convivenza-felice.webp?itok=_NoVS8I7"), defaultCurrency: Currency(code: "EUR", name: "Euro", symbol: "€"))
     
     
     let expense1 = Expense(team: teamCuccia, date: format(string:"2024-05-01"), amount: 23.4, title: "Lunch", member: jane , currency: teamCuccia.defaultCurrency, splittingRate: 50, category: "food")
@@ -71,7 +71,7 @@ final class SampleData {
     let giorgio = Member(name: "Giorgio", isUser: false, profileImage: String(), balance: -44.0)
     let laura = Member(name: "Laura", isUser: false, profileImage: String(), balance: -20.0)
     
-    let teamMare = Team(name: "Vacations", isCurrent: false, members: [mimmo2, giorgio, laura], expenses: [], sharingCode: "code", coverImage: String("https://www.reisroutes.be/userfiles/fotos/eze-sur-mer-dagje-genieten-op-het-strand_21614_xl.jpg"), defaultCurrency: Money(code: "EUR", name: "Euro", symbol: "€"))
+    let teamMare = Team(name: "Vacations", isCurrent: false, members: [mimmo2, giorgio, laura], expenses: [], sharingCode: "code", coverImage: String("https://www.reisroutes.be/userfiles/fotos/eze-sur-mer-dagje-genieten-op-het-strand_21614_xl.jpg"), defaultCurrency: Currency(code: "EUR", name: "Euro", symbol: "€"))
     let expense1a = Expense(team: teamMare, date: format(string:"2025-04-10"), amount: 23.4, title: "Breakfast", member: mimmo2 , currency: teamCuccia.defaultCurrency, splittingRate: 50, category: "food")
     let expense2a = Expense(team: teamMare, date: format(string:"2025-04-11"), amount: 223.1, title: "Drink", member: laura , currency: teamCuccia.defaultCurrency, splittingRate: 50, category: "food")
     let expense3a = Expense(team: teamMare, date: format(string:"2025-04-12"), amount: 12.00, title: "Taxi", member: mimmo2 , currency: teamCuccia.defaultCurrency, splittingRate: 50, category: "Transport")
@@ -83,7 +83,7 @@ final class SampleData {
     let raffaele = Member(name: "Raffaele", isUser: false, profileImage: String(), balance: -23.0)
     let ludovica = Member(name: "Ludovica", isUser: false, profileImage: String(), balance: -100.0)
     
-    let teamMontagna = Team(name: "Mountains", isCurrent: false, members: [mimmo3, raffaele, ludovica], expenses: [], sharingCode: "code", coverImage: String( "https://www.benesserehotels.com/images/guide/montagna%5B1%5D_dwn.JPG"), defaultCurrency: Money(code: "EUR", name: "Euro", symbol: "€"))
+    let teamMontagna = Team(name: "Mountains", isCurrent: false, members: [mimmo3, raffaele, ludovica], expenses: [], sharingCode: "code", coverImage: String( "https://www.benesserehotels.com/images/guide/montagna%5B1%5D_dwn.JPG"), defaultCurrency: Currency(code: "EUR", name: "Euro", symbol: "€"))
     let expense1b = Expense(team: teamMontagna, date: format(string:"2025-03-10"), amount: 43.4, title: "Spaghetti", member: mimmo3 , currency: teamCuccia.defaultCurrency, splittingRate: 50, category: "food")
     let expense2b = Expense(team: teamMontagna, date: format(string:"2025-03-09"), amount: 23.1, title: "Colazione", member: raffaele , currency: teamCuccia.defaultCurrency, splittingRate: 50, category: "food")
     let expense3b = Expense(team: teamMontagna, date: format(string:"2025-03-08"), amount: 132.00, title: "Traghetto", member: ludovica , currency: teamCuccia.defaultCurrency, splittingRate: 50, category: "Transport")
