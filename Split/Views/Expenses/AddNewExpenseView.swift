@@ -44,10 +44,7 @@ struct AddNewExpenseView: View {
   
   var body: some View {
     
-    if expense == nil {
-       
-      NavigationView {
-      }
+    NavigationView {
       Form {
         Section {
           TextField("Description", text: $title)
@@ -176,15 +173,15 @@ extension AddNewExpenseView {
     }
     else {
       let expense = Expense(
-      team: currentTeam,
-      date: date,
-      amount: amountValue,
-      rate: conversionRateValue,
-      title: title,
-      payer: currentTeam.members.first(where: { $0.name == payer })!,
-      currency: Currency.retrieve(fromCode: currency),
-      splittingRate: Double(splittingRate)!,
-      category: category)
+        team: currentTeam,
+        date: date,
+        amount: amountValue,
+        rate: conversionRateValue,
+        title: title,
+        payer: currentTeam.members.first(where: { $0.name == payer })!,
+        currency: Currency.retrieve(fromCode: currency),
+        splittingRate: Double(splittingRate)!,
+        category: category)
       modelContext.insert(expense)
     }
     dismiss()
@@ -194,80 +191,4 @@ extension AddNewExpenseView {
 //#Preview {
 //  AddNewExpenseView()
 //    .modelContainer(SampleData.shared.modelContainer)
-//}
-
-//extension AddNewExpenseView {
-//  
-//  struct ExpenseFormView: View {
-//    
-//    var body: some View {
-//      
-//      Form {
-//        Section {
-//          TextField("Description", text: $title)
-//            .focused($focusedField, equals: .title)
-//            .keyboardType(.alphabet)
-//            .submitLabel(.next)
-//            .onSubmit {
-//              goToNextField(offset: 1)
-//            }
-//        }
-//        
-//        Section {
-//          TextField("Amount", text: $amount)
-//            .focused($focusedField, equals: .amount)
-//            .keyboardType(.decimalPad)
-//            .onSubmit {
-//              print("asdasdasdasdsadasdsa")
-//            }
-//          
-//          Picker("Currency", selection: $currency) {
-//            ForEach(Currency.list()){ currency in
-//              Text(currency.code).tag(currency.code)
-//            }
-//          }
-//          .onChange(of: currency){
-//            showConversionRateField = currency != currentTeam.defaultCurrency.code
-//          }
-//          
-//          if showConversionRateField == true {
-//            TextField("Convertion Rate", text: $conversionRate)
-//              .keyboardType(.decimalPad)
-//          }
-//          
-//        }
-//        
-//        Section {
-//          Picker("Payer", selection: $payer) {
-//            ForEach(currentTeam.members, id: \.self){ member in
-//              Text(member.name).tag(member.name)
-//            }
-//          }
-//          
-//          Picker("Category", selection: $category) {
-//            ForEach(categories, id: \.self) { category in
-//              Text(category).tag(category)
-//            }
-//          }
-//        }
-//        
-//        Section{
-//          Picker("Splitting", selection: $splittingRate) {
-//            let rates = ["50%", "100%", "Custom"]
-//            ForEach(rates, id: \.self) { rate in
-//              Text(rate).tag(rate)
-//            }
-//          }
-//          .pickerStyle(.navigationLink)
-//        }
-//        
-//        Section {
-//          DatePicker("Date", selection: $date, displayedComponents: [.date, .hourAndMinute])
-//            .datePickerStyle(.compact)
-//        }
-//      }
-//    }
-//    
-//  }
-//  
 //}
