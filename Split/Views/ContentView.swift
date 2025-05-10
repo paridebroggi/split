@@ -14,6 +14,9 @@ struct ContentView: View {
   @State private var presentAddNewExpenseView = false
   @State private var presentAddNewTeamView = false
   @State private var presentTeamsView = false
+  @State private var presentProfileView = false
+  
+  var user: Member?
   
   @Query(sort: \Team.name) private var teams: [Team]
   
@@ -96,9 +99,15 @@ struct ContentView: View {
       }
     }
     .onAppear {
+      if user == nil {
+        presentProfileView = true
+      }
       if teams.isEmpty == true {
         presentAddNewTeamView = true
       }
+    }
+    .sheet(isPresented: $presentProfileView){
+      Text("Profile View")
     }
     .sheet(isPresented: $presentTeamsView){
       TeamsView(teams: teams)
