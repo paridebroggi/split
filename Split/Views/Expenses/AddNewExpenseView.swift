@@ -34,7 +34,7 @@ struct AddNewExpenseView: View {
   @State private var splittingRate = String()
   @State private var date: Date = Date()
   @State private var showConversionRateField = false
-  @State private var convertiongRate = String(1)
+  @State private var conversionRate = String(1)
   
   private let categories: [String] = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Travel", "Health", "Other"]
   
@@ -99,7 +99,7 @@ struct AddNewExpenseView: View {
           
           if showConversionRateField == true {
             withAnimation() {
-              TextField("Convertion Rate", text: $convertiongRate)
+              TextField("Convertion Rate", text: $conversionRate)
             }
           }
           
@@ -109,7 +109,6 @@ struct AddNewExpenseView: View {
           DatePicker("Date", selection: $date, displayedComponents: [.date, .hourAndMinute])
             .datePickerStyle(.compact)
         }
-        
       }
       .animation(.default, value: showConversionRateField)
       .onAppear {
@@ -155,8 +154,9 @@ extension AddNewExpenseView {
   
   private func saveExpense() {
     // Validate amount
-    guard let amountValue = NumberFormatter().number(from: amount)?.doubleValue, amountValue > 0 else {
-      errorMessage = "Please enter a valid amount"
+    guard let amountValue = NumberFormatter().number(from: amount)?.doubleValue, amountValue > 0,
+          let conversionRateValue = NumberFormatter().number(from: conversionRate)?.doubleValue, conversionRateValue > 0 else {
+      errorMessage = "Please enter a valid amount and conversion rate"
       showError = true
       return
     }
@@ -166,6 +166,7 @@ extension AddNewExpenseView {
       team: currentTeam,
       date: date,
       amount: amountValue,
+      rate: conversionRateValue,
       title: title,
       member: currentTeam.members.first(where: { $0.name == payer })!,
       currency: Currency.retrieveCurrency(code: currency),
