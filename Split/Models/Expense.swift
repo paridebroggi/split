@@ -22,13 +22,13 @@ final class Expense {
     var splittingRate: Double
     var category: String
     
-  init(team: Team, date: Date, amount: Double, rate: Double, title: String, member: Member, currency: Currency, splittingRate: Double, category: String) {
+  init(team: Team, date: Date, amount: Double, rate: Double, title: String, payer: Member, currency: Currency, splittingRate: Double, category: String) {
         self.team = team
         self.date = date
         self.amount = amount
         self.rate = rate
         self.title = title
-        self.payer = member
+        self.payer = payer
         self.currency = currency
         self.splittingRate = splittingRate
         self.category = category

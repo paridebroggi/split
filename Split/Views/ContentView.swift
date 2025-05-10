@@ -33,7 +33,7 @@ struct ContentView: View {
           if let currentTeam = currentTeam {
             HeaderView(team: currentTeam)
             TeamView(team: currentTeam)
-            RecentView(expenses: currentTeam.expenses.sorted(by: { $0.date > $1.date }))
+            RecentView(expenses: currentTeam.expenses.sorted(by: { $0.date > $1.date }), currentTeam: currentTeam)
           }
         }
         .listStyle(.sidebar)
@@ -75,7 +75,7 @@ struct ContentView: View {
         
         ToolbarItem(placement: .topBarLeading) {
             Button {
-              print("Tapped Profil")
+              print("Tapped Profile")
             } label: {
               Label("Profile", systemImage: "person.crop.circle")
             }

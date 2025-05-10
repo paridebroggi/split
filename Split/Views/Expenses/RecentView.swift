@@ -15,6 +15,7 @@ struct RecentView: View {
     @State private var isExpanded = true
      
     let expenses: [Expense]
+    let currentTeam: Team
     
     
     var body: some View {
@@ -22,7 +23,7 @@ struct RecentView: View {
         Section("Recent Expenses") {
             
             ForEach(expenses.prefix(5)) { expense in
-                NavigationLink(destination: ExpenseDetailView(expense: expense)) {
+              NavigationLink(destination: AddNewExpenseView(expense: expense, currentTeam: currentTeam)) {
                     ExpenseRowView(expense: expense)
                 }
             }
