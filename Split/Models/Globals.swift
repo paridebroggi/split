@@ -7,4 +7,3 @@
 
 
 let categories: [String] = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Travel", "Health", "Other"]
-

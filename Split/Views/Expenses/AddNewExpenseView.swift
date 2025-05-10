@@ -32,13 +32,13 @@ struct AddNewExpenseView: View {
   @State private var payer = String()
   @State private var category = String("Food")
   @State private var currency = Locale.current.currency?.identifier ?? "EUR"
-  @State private var splittingRate = String()
+  @State private var splittingRate = String(50)
   @State private var date: Date = Date()
   @State private var showConversionRateField = false
   @State private var conversionRate = String(1)
   
   enum FocusedField: Int, CaseIterable {
-    case title, amount, splittingRate
+    case title, amount
   }
   
   var body: some View {
@@ -46,7 +46,7 @@ struct AddNewExpenseView: View {
     NavigationView {
       Form {
         Section {
-          TextField("What?", text: $title)
+          TextField("Description", text: $title)
             .focused($focusedField, equals: .title)
             .keyboardType(.alphabet)
             .submitLabel(.next)
@@ -62,31 +62,7 @@ struct AddNewExpenseView: View {
             .onSubmit {
                 print("asdasdasdasdsadasdsa")
             }
-        }
-        
-        Section {
-          Picker("Payer", selection: $payer) {
-            ForEach(currentTeam.members, id: \.self){ member in
-              Text(member.name).tag(member.name)
-            }
-          }
-        }
-        
-        Section {
-          Picker("Category", selection: $category) {
-            ForEach(categories, id: \.self) { category in
-              Text(category).tag(category)
-            }
-          }
-        }
-        
-        Section {
-          TextField("Splitting rate", text: $splittingRate)
-            .focused($focusedField, equals: .splittingRate)
-            .keyboardType(.decimalPad)
-        }
-        
-        Section {
+
           Picker("Currency", selection: $currency) {
             ForEach(Currency.list()){ currency in
               Text(currency.code).tag(currency.code)
@@ -97,13 +73,33 @@ struct AddNewExpenseView: View {
           }
           
           if showConversionRateField == true {
-            withAnimation() {
               TextField("Convertion Rate", text: $conversionRate)
-            }
+              .keyboardType(.decimalPad)
           }
           
         }
         
+        Section {
+          Picker("Payer", selection: $payer) {
+            ForEach(currentTeam.members, id: \.self){ member in
+              Text(member.name).tag(member.name)
+            }
+          }
+
+          Picker("Category", selection: $category) {
+            ForEach(categories, id: \.self) { category in
+              Text(category).tag(category)
+            }
+          }
+       
+          Picker("Splitting", selection: $splittingRate) {
+            let rates = ["50.0%", "100.0%", "Custom"]
+            ForEach(rates, id: \.self) { rate in
+              Text(rate).tag(rate)
+            }
+          }
+        }
+               
         Section {
           DatePicker("Date", selection: $date, displayedComponents: [.date, .hourAndMinute])
             .datePickerStyle(.compact)
@@ -120,6 +116,7 @@ struct AddNewExpenseView: View {
         category = String("Food")
         currency = currentTeam.defaultCurrency.code
         focusedField = .title
+        splittingRate = "\(String(format: "%.1f", 100.0 / Double(currentTeam.members.count)))%"
       }
       .navigationTitle("New Expense")
       .navigationBarTitleDisplayMode(.inline)
