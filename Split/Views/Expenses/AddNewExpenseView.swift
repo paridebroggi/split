@@ -14,6 +14,7 @@ struct AddNewExpenseView: View {
   @Environment(\.dismiss) private var dismiss
   
   let currentTeam: Team
+  
   let formatter: NumberFormatter = {
     let formatter = NumberFormatter()
     formatter.numberStyle = .currency
@@ -87,7 +88,7 @@ struct AddNewExpenseView: View {
         
         Section {
           Picker("Currency", selection: $currency) {
-            ForEach(Currency.getAllCurrencies()){ currency in
+            ForEach(Currency.list()){ currency in
               Text(currency.code).tag(currency.code)
             }
           }
@@ -167,7 +168,7 @@ extension AddNewExpenseView {
       rate: conversionRateValue,
       title: title,
       member: currentTeam.members.first(where: { $0.name == payer })!,
-      currency: Currency.retrieveCurrency(code: currency),
+      currency: Currency.retrieve(fromCode: currency),
       splittingRate: Double(splittingRate)!,
       category: category
     )

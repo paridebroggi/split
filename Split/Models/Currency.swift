@@ -28,7 +28,7 @@ struct Currency: Codable, Identifiable {
     self.symbol = "E"
   }
   
-  static func getAllCurrencies() -> [Currency] {
+  static func list() -> [Currency] {
     
     let locale = Locale.current
     let formatter = NumberFormatter()
@@ -48,7 +48,7 @@ struct Currency: Codable, Identifiable {
     return currencies
   }
   
-  static func retrieveCurrency(code: String) -> Currency {
-    return getAllCurrencies().first(where: { $0.code == code })!
+  static func retrieve(fromCode: String) -> Currency {
+    return list().first(where: { $0.code == fromCode })!
   }
 }

@@ -101,7 +101,7 @@ extension AddNewTeamView {
    
   private func saveTeam() {
     team.name = teamName
-    team.defaultCurrency = Currency.retrieveCurrency(code: currency)
+    team.defaultCurrency = Currency.retrieve(fromCode: currency)
     team.isCurrent = teams.isEmpty
     modelContext.insert(team)
   }
