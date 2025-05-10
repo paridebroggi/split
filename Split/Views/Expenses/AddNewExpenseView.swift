@@ -33,9 +33,10 @@ struct AddNewExpenseView: View {
   @State private var category = String("Food")
   @State private var currency = Locale.current.currency?.identifier ?? "EUR"
   @State private var splittingRate = String(50)
+  @State private var conversionRate = String(1)
+  @State private var customCategory = String()
   @State private var date: Date = Date()
   @State private var showConversionRateField = false
-  @State private var conversionRate = String(1)
   
   enum FocusedField: Int, CaseIterable {
     case title, amount
@@ -60,9 +61,9 @@ struct AddNewExpenseView: View {
             .focused($focusedField, equals: .amount)
             .keyboardType(.decimalPad)
             .onSubmit {
-                print("asdasdasdasdsadasdsa")
+              print("asdasdasdasdsadasdsa")
             }
-
+          
           Picker("Currency", selection: $currency) {
             ForEach(Currency.list()){ currency in
               Text(currency.code).tag(currency.code)
@@ -73,7 +74,7 @@ struct AddNewExpenseView: View {
           }
           
           if showConversionRateField == true {
-              TextField("Convertion Rate", text: $conversionRate)
+            TextField("Convertion Rate", text: $conversionRate)
               .keyboardType(.decimalPad)
           }
           
@@ -85,21 +86,24 @@ struct AddNewExpenseView: View {
               Text(member.name).tag(member.name)
             }
           }
-
+          
           Picker("Category", selection: $category) {
             ForEach(categories, id: \.self) { category in
               Text(category).tag(category)
             }
           }
-       
+        }
+        
+        Section{
           Picker("Splitting", selection: $splittingRate) {
-            let rates = ["50.0%", "100.0%", "Custom"]
+            let rates = ["50%", "100%", "Custom"]
             ForEach(rates, id: \.self) { rate in
               Text(rate).tag(rate)
             }
           }
+          .pickerStyle(.navigationLink)
         }
-               
+        
         Section {
           DatePicker("Date", selection: $date, displayedComponents: [.date, .hourAndMinute])
             .datePickerStyle(.compact)
@@ -116,7 +120,7 @@ struct AddNewExpenseView: View {
         category = String("Food")
         currency = currentTeam.defaultCurrency.code
         focusedField = .title
-        splittingRate = "\(String(format: "%.1f", 100.0 / Double(currentTeam.members.count)))%"
+        splittingRate = "\(SplitApp.formatDoubleNumber(100.0 / Double(currentTeam.members.count)))%"
       }
       .navigationTitle("New Expense")
       .navigationBarTitleDisplayMode(.inline)
