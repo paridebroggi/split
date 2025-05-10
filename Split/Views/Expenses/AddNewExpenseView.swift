@@ -36,8 +36,6 @@ struct AddNewExpenseView: View {
   @State private var showConversionRateField = false
   @State private var conversionRate = String(1)
   
-  private let categories: [String] = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Travel", "Health", "Other"]
-  
   enum FocusedField: Int, CaseIterable {
     case title, amount, splittingRate
   }

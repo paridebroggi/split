@@ -45,8 +45,6 @@ final class SampleData {
     let dateFormatter = ISO8601DateFormatter()
     dateFormatter.formatOptions = [.withFullDate] // Added format options
     let date = dateFormatter.date(from: string) ?? Date.now
-    print(dateFormatter.date(from: string) ?? "Empty")
-    print("ISO TIME: " + string)
     return date
   }
   
@@ -92,9 +90,6 @@ final class SampleData {
     
     teams = [teamCuccia, teamMare, teamMontagna]
     currentTeam = teamMontagna
-    //                context.insert(teamMontagna)
-    //                context.insert(teamMare)
-    //                context.insert(teamCuccia)
   }
   
 }
