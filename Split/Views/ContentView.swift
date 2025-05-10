@@ -27,7 +27,7 @@ struct ContentView: View {
   var body: some View {
     NavigationView {
       ZStack{
-        Text("Pleasse add an expense group first")
+        Text("Please add an expense group first")
           .padding(24)
         List() {
           if let currentTeam = currentTeam {
