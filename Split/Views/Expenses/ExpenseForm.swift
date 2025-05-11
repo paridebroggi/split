@@ -17,7 +17,6 @@ struct ExpenseFormView: View {
   let currentTeam: Team
   @State var isDisabled: Bool
   @State private var defaultSplittingRates = ["50", "100", "Custom"]
-  @State private var showError: Bool = false
   @State private var errorMessage = String()
   @State private var currentIndex = Int(0)
   @State private var amount = String()
@@ -29,6 +28,8 @@ struct ExpenseFormView: View {
   @State private var conversionRate = String()
   @State private var customCategory = String()
   @State private var date: Date = Date()
+  @State private var showError = false
+  @State private var formInputChanged = false
   @State private var showConversionRateField = false
   @FocusState private var focusedField: FocusedField?
   
@@ -100,6 +101,9 @@ struct ExpenseFormView: View {
           .datePickerStyle(.compact)
       }
     }
+    .onChange(of: focusedField){
+      formInputChanged = true
+    }
     .disabled(isDisabled)
     .toolbar {
       ToolbarItem(placement: .navigationBarLeading) {
@@ -119,6 +123,11 @@ struct ExpenseFormView: View {
           }
           .font(.headline)
           .disabled(title.isEmpty || amount.isEmpty)
+        }
+        else if formInputChanged == true {
+          Button("Save") {
+            saveExpense()
+          }
         }
         else {
           Button("Edit") {
