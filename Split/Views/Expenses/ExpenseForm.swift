@@ -16,7 +16,7 @@ struct ExpenseFormView: View {
   var expense: Expense?
   let currentTeam: Team
   @State var isDisabled: Bool
-  @State private var defaultSplittingRates = ["50", "100", "Custom"]
+  @State private var defaultSplittingRates = ["100", "50"]
   @State private var errorMessage = String()
   @State private var currentIndex = Int(0)
   @State private var amount = String()
@@ -157,9 +157,9 @@ extension ExpenseFormView {
   private func prefillForm() {
     if let expense = expense {
       title = expense.title
-      amount = String(expense.amount)
+      amount = SplitApp.formatDoubleNumber(expense.amount)
       currency = expense.currency.code
-      conversionRate = String(expense.conversionRate)
+      conversionRate = SplitApp.formatDoubleNumber(expense.conversionRate)
       payer = expense.payer.name
       category = expense.category
       splittingRate = SplitApp.formatDoubleNumber(expense.splittingRate)
@@ -170,7 +170,10 @@ extension ExpenseFormView {
       payer = currentTeam.members.first(where: {$0.isUser == true})?.name ?? currentTeam.members.first?.name ?? ""
       conversionRate = String(1)
       splittingRate = SplitApp.formatDoubleNumber(100/Double(currentTeam.members.count))
-      defaultSplittingRates.append(splittingRate)
+      guard let _ = defaultSplittingRates.first(where: {$0 == splittingRate}) else {
+        defaultSplittingRates.append(splittingRate)
+        return
+      }
     }
   }
   
