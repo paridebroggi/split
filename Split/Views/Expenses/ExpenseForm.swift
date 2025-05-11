@@ -1,0 +1,207 @@
+//
+//  ExpenseForm.swift
+//  Split
+//
+//  Created by p on 10/05/2025.
+//
+
+import SwiftUI
+import SwiftData
+
+struct ExpenseFormView: View {
+  
+  @Environment(\.modelContext) private var modelContext
+  @Environment(\.dismiss) private var dismiss
+  
+  var expense: Expense?
+  let currentTeam: Team
+  @State var isDisabled: Bool
+  @State private var defaultSplittingRates = ["50", "100", "Custom"]
+  @State private var showError: Bool = false
+  @State private var errorMessage = String()
+  @State private var currentIndex = Int(0)
+  @State private var amount = String()
+  @State private var title = String()
+  @State private var payer = String()
+  @State private var category = String("Food") // to be changed
+  @State private var currency = Locale.current.currency?.identifier ?? "EUR"
+  @State private var splittingRate = String()
+  @State private var conversionRate = String()
+  @State private var customCategory = String()
+  @State private var date: Date = Date()
+  @State private var showConversionRateField = false
+  @FocusState private var focusedField: FocusedField?
+  
+  enum FocusedField: Int, CaseIterable {
+    case title, amount
+  }
+  
+  var body: some View {
+    
+    Form {
+      Section {
+        TextField("Description", text: $title)
+          .focused($focusedField, equals: .title)
+          .keyboardType(.alphabet)
+          .submitLabel(.next)
+          .onSubmit {
+            goToNextField(offset: 1)
+          }
+      }
+      
+      Section {
+        TextField("Amount", text: $amount)
+          .focused($focusedField, equals: .amount)
+          .keyboardType(.decimalPad)
+          .onSubmit {
+          }
+        
+        Picker("Currency", selection: $currency) {
+          ForEach(Currency.list()){ currency in
+            Text(currency.code).tag(currency.code)
+          }
+        }
+        .onChange(of: currency){
+          showConversionRateField = currency != currentTeam.defaultCurrency.code
+        }
+        
+        if showConversionRateField == true {
+          TextField("Convertion Rate", text: $conversionRate)
+            .keyboardType(.decimalPad)
+        }
+        
+      }
+      
+      Section {
+        Picker("Payer", selection: $payer) {
+          ForEach(currentTeam.members, id: \.self){ member in
+            Text(member.name).tag(member.name)
+          }
+        }
+        
+        Picker("Category", selection: $category) {
+          ForEach(categories, id: \.self) { category in
+            Text(category).tag(category)
+          }
+        }
+      }
+      
+      Section{
+        Picker("Splitting", selection: $splittingRate) {
+          ForEach(defaultSplittingRates, id: \.self) { rate in
+            Text("\(rate)%").tag(rate)
+          }
+        }
+        .pickerStyle(.navigationLink)
+      }
+      
+      Section {
+        DatePicker("Date", selection: $date, displayedComponents: [.date, .hourAndMinute])
+          .datePickerStyle(.compact)
+      }
+    }
+    .disabled(isDisabled)
+    .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) {
+        if expense == nil {
+          Button("Cancel") {
+            dismiss()
+          }
+        }
+        }
+      }
+    
+    .toolbar {
+      ToolbarItem(placement: .navigationBarTrailing) {
+        if expense == nil {
+          Button("Done") {
+            saveExpense()
+          }
+          .font(.headline)
+          .disabled(title.isEmpty || amount.isEmpty)
+        }
+        else {
+          Button("Edit") {
+            isDisabled = false
+            focusedField = .title
+          }
+        }
+      }
+    
+    }
+    .animation(.default, value: showConversionRateField)
+    .onAppear {
+      prefillForm()
+    }
+    .alert("Error", isPresented: $showError) {
+      Button("OK", role: .cancel) { }
+    }
+    message: {
+      Text(errorMessage)
+    }
+  }
+  
+}
+
+extension ExpenseFormView {
+  
+  private func prefillForm() {
+    if let expense = expense {
+      title = expense.title
+      amount = String(expense.amount)
+      currency = expense.currency.code
+      conversionRate = String(expense.conversionRate)
+      payer = expense.payer.name
+      category = expense.category
+      splittingRate = SplitApp.formatDoubleNumber(expense.splittingRate)
+      date = expense.date
+    }
+    else {
+      focusedField = .title
+      payer = currentTeam.members.first(where: {$0.isUser == true})?.name ?? currentTeam.members.first?.name ?? ""
+      conversionRate = String(1)
+      splittingRate = SplitApp.formatDoubleNumber(100/Double(currentTeam.members.count))
+      defaultSplittingRates.append(splittingRate)
+    }
+  }
+  
+  private func goToNextField(offset: Int) {
+    currentIndex = (currentIndex + offset) % FocusedField.allCases.count
+    focusedField = FocusedField(rawValue: currentIndex)
+  }
+  
+  private func saveExpense() {
+    let numberFormatter = NumberFormatter()
+    guard let amountValue = numberFormatter.number(from: amount)?.doubleValue, amountValue > 0,
+          let conversionRateValue = numberFormatter.number(from: conversionRate)?.doubleValue, conversionRateValue > 0 else {
+      errorMessage = "Please enter a valid amount and conversion rate"
+      showError = true
+      return
+    }
+    
+    if let expense = expense {
+      expense.date = date
+      expense.amount = amountValue
+      expense.conversionRate = conversionRateValue
+      expense.title = title
+      expense.payer = currentTeam.members.first(where: { $0.name == payer })!
+      expense.currency = Currency.retrieve(fromCode: currency)
+      expense.splittingRate = Double(splittingRate)!
+      expense.category = category
+    }
+    else {
+      let expense = Expense(
+        team: currentTeam,
+        date: date,
+        amount: amountValue,
+        conversionRate: conversionRateValue,
+        title: title,
+        payer: currentTeam.members.first(where: { $0.name == payer })!,
+        currency: Currency.retrieve(fromCode: currency),
+        splittingRate: Double(splittingRate)!,
+        category: category)
+      modelContext.insert(expense)
+    }
+    dismiss()
+  }
+}

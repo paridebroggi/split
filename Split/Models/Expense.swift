@@ -15,18 +15,18 @@ final class Expense {
     var id = UUID()
     var date: Date
     var amount: Double
-  var rate: Double
+  var conversionRate: Double
     var title: String
     var payer: Member
     var currency: Currency
     var splittingRate: Double
     var category: String
     
-  init(team: Team, date: Date, amount: Double, rate: Double, title: String, payer: Member, currency: Currency, splittingRate: Double, category: String) {
+  init(team: Team, date: Date, amount: Double, conversionRate: Double, title: String, payer: Member, currency: Currency, splittingRate: Double, category: String) {
         self.team = team
         self.date = date
         self.amount = amount
-        self.rate = rate
+        self.conversionRate = conversionRate
         self.title = title
         self.payer = payer
         self.currency = currency
