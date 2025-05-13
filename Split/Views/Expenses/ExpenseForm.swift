@@ -157,19 +157,19 @@ extension ExpenseFormView {
   private func prefillForm() {
     if let expense = expense {
       title = expense.title
-      amount = SplitApp.formatDoubleNumber(expense.amount)
+      amount = expense.amount.toString()!
       currency = expense.currency.code
-      conversionRate = SplitApp.formatDoubleNumber(expense.conversionRate)
+      conversionRate = expense.conversionRate.toString()!
       payer = expense.payer.name
       category = expense.category
-      splittingRate = SplitApp.formatDoubleNumber(expense.splittingRate)
+      splittingRate = expense.splittingRate.toString()!
       date = expense.date
     }
     else {
       focusedField = .title
-      payer = currentTeam.members.first(where: {$0.isUser == true})?.name ?? currentTeam.members.first?.name ?? ""
+      payer = currentTeam.lastPayer?.name ?? currentTeam.members.first?.name ?? ""
       conversionRate = String(1)
-      splittingRate = SplitApp.formatDoubleNumber(100/Double(currentTeam.members.count))
+      splittingRate = (100/Double(currentTeam.members.count)).toString()!
       guard let _ = defaultSplittingRates.first(where: {$0 == splittingRate}) else {
         defaultSplittingRates.append(splittingRate)
         return
@@ -198,7 +198,7 @@ extension ExpenseFormView {
       expense.title = title
       expense.payer = currentTeam.members.first(where: { $0.name == payer })!
       expense.currency = Currency.retrieve(fromCode: currency)
-      expense.splittingRate = Double(splittingRate)!
+      expense.splittingRate = splittingRate.toDouble()!
       expense.category = category
     }
     else {
@@ -210,8 +210,9 @@ extension ExpenseFormView {
         title: title,
         payer: currentTeam.members.first(where: { $0.name == payer })!,
         currency: Currency.retrieve(fromCode: currency),
-        splittingRate: Double(splittingRate)!,
+        splittingRate: splittingRate.toDouble()!,
         category: category)
+      currentTeam.lastPayer = expense.payer
       modelContext.insert(expense)
     }
     dismiss()

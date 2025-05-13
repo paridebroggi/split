@@ -12,13 +12,11 @@ import SwiftData
 final class Member {
   var id = UUID()
   var name = String()
-  var isUser: Bool = false
   var profileImage = String()
   var balance = Double.zero
   
-  init(name: String, isUser: Bool, profileImage: String, balance: Double) {
+  init(name: String, profileImage: String, balance: Double) {
     self.name = name
-    self.isUser = isUser
     self.profileImage = profileImage
     self.balance = balance
     self.profileImage = profileImage

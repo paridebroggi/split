@@ -15,7 +15,7 @@ struct AddNewMemberView: View {
   @Environment(\.dismiss) var dismiss
   
   let team: Team
-  let member = Member(name: "gennaro", isUser: false, profileImage: "genny", balance: 0)
+  let member = Member(name: "gennaro", profileImage: "genny", balance: 0)
   
   @State private var name: String = String()
   @State private var pickedImage: PhotosPickerItem?

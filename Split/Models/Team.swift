@@ -13,6 +13,7 @@ final class Team {
   var name = String("Sample Group")
   var isCurrent = false
   var members = [Member]()
+  var lastPayer: Member?
   @Relationship(deleteRule: .cascade, inverse: \Expense.team) var expenses = [Expense]()
   var sharingCode = String("SHA-0123")
   var coverImage = String()

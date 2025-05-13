@@ -25,14 +25,28 @@ extension SplitApp {
       return nil
     }
   }
-  
-  static func formatDoubleNumber(_ number: Double, locale: Locale = .current) -> String {
-      let formatter = NumberFormatter()
-      formatter.locale = locale
-      formatter.minimumFractionDigits = 0
-      formatter.maximumFractionDigits = 2
-      formatter.numberStyle = .decimal
+}
 
-      return formatter.string(from: NSNumber(value: number)) ?? "\(number)"
+extension String {
+  
+  func toDouble() -> Double? {
+    let formatter = NumberFormatter()
+    formatter.locale = Locale.current
+    formatter.numberStyle = .decimal
+    return formatter.number(from: self)?.doubleValue
   }
+
+}
+
+extension Double {
+  
+  func toString() -> String? {
+    let formatter = NumberFormatter()
+    formatter.locale = Locale.current
+    formatter.minimumFractionDigits = 0
+    formatter.maximumFractionDigits = 2
+    formatter.numberStyle = .decimal
+    return formatter.string(from: NSNumber(value: self))
+  }
+
 }
