@@ -14,20 +14,19 @@ struct AddNewTeamView: View {
   @Environment(\.dismiss) private var dismiss
   
   @State private var teamName = String()
-  @State private var defaultCurrency = "EUR"
-  @State private var showError = false
-  @State private var errorMessage = ""
-  @State private var currency = "EUR"
+  @State private var currency = Locale.current.currency?.identifier ?? "EUR"
+  @State private var conversionRate = String(1)
+  @State private var showConversionRateField = false
   @State private var presentNewMemberView = false
   @State private var presentImagePicker = false
-  @State private var isShareEnabled = false
+  @State private var isSharingEnabled = false
+  @State private var showError = false
+  @State private var errorMessage = ""
   @FocusState private var focusedField: FocusedField?
   
   enum FocusedField: Int, CaseIterable {
     case teamName
   }
-  
-  private let currencies = ["$", "EUR", "£", "¥"]
   
   let teams: [Team]
   let team = Team()
@@ -40,7 +39,7 @@ struct AddNewTeamView: View {
           TextField("Family, Holidays, Friends...", text: $teamName)
             .focused($focusedField, equals: .teamName)
         }
-        Section(header: Text("Image"), footer: Text("Add an image to make the group easier to recognize.")) {
+        Section(header: Text("Image"), footer: Text("Add a picture that represents the expense group.")) {
           ImageViewWithPicker(team: team)
             .listRowInsets(EdgeInsets())
         }
@@ -59,25 +58,42 @@ struct AddNewTeamView: View {
           }
         }
         
-        Section(header: Text("Defaults")) {
-          Section {
-            Picker("Default Currency", selection: $currency) {
-              ForEach(currencies, id: \.self){ currency in
-                Text(currency).tag(currency)
+        Section(header: Text("Settings")) {
+            Picker("Currency", selection: $currency) {
+              ForEach(Currency.list()){ currency in
+                Text(currency.code).tag(currency.code)
               }
+            }
+            .onChange(of: currency){
+              showConversionRateField = currency != team.defaultCurrency.code
+            }
+            
+            if showConversionRateField == true {
+              TextField("Convertion Rate", text: $conversionRate)
+                .keyboardType(.decimalPad)
+            }
+          
+            Toggle("Enable budgeting", isOn: $isSharingEnabled)
+          }
+        
+        Section(header: Text("Sharing"), footer: isSharingEnabled == true ? Text("Share this code to let other people join the group.") : nil){
+          Toggle("Share expense group", isOn: $isSharingEnabled)
+          if isSharingEnabled == true {
+            HStack {
+              Spacer()
+              Button("XEVJ2093") {
+                print("share button tapped")
+              }
+              Spacer()
             }
           }
         }
-        
-        Section(header: Text("Sharing"), footer: Text("Share this code with other members to join your group.")){
-          Toggle("Share with other memebrs", isOn: $isShareEnabled)
-          Text("XEVJ2093").foregroundStyle(.secondary)
-        }
       }
+      .animation(.default, value: isSharingEnabled)
       .onAppear() {
         focusedField = .teamName
       }
-      .navigationTitle("Group Details")
+      .navigationTitle("Expense Group Details")
       .navigationBarTitleDisplayMode(.inline)
       .navigationBarItems(
         leading: Button("Cancel") {

@@ -14,10 +14,6 @@ struct SplitApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView()
-        .onAppear(){
-          print(String("33,33").toDouble()!)
-          print(Double(3.03).toString()!)
-        }
     }
     .modelContainer(for: [
       Team.self,
