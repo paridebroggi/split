@@ -22,6 +22,7 @@ struct AddNewTeamView: View {
   @State private var isSharingEnabled = false
   @State private var showError = false
   @State private var errorMessage = ""
+  @State private var isBudgetingEnabled = false
   @FocusState private var focusedField: FocusedField?
   
   enum FocusedField: Int, CaseIterable {
@@ -73,7 +74,7 @@ struct AddNewTeamView: View {
                 .keyboardType(.decimalPad)
             }
           
-            Toggle("Enable budgeting", isOn: $isSharingEnabled)
+            Toggle("Enable budgeting", isOn: $isBudgetingEnabled)
           }
         
         Section(header: Text("Sharing"), footer: isSharingEnabled == true ? Text("Share this code to let other people join the group.") : nil){
@@ -118,6 +119,7 @@ extension AddNewTeamView {
   private func saveTeam() {
     team.name = teamName
     team.defaultCurrency = Currency.retrieve(fromCode: currency)
+    team.defaultConversionRate = conversionRate.toDouble()!
     team.isCurrent = teams.isEmpty
     modelContext.insert(team)
   }

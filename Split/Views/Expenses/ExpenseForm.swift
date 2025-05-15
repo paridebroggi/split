@@ -16,14 +16,14 @@ struct ExpenseFormView: View {
   var expense: Expense?
   let currentTeam: Team
   @State var isDisabled: Bool
-  @State private var defaultSplittingRates = ["100", "50"]
+  @State private var defaultSplittingRates = [100.0, 50.0]
   @State private var errorMessage = String()
   @State private var currentIndex = Int(0)
   @State private var amount = String()
   @State private var title = String()
   @State private var payer = String()
   @State private var category = String("Food") // to be changed
-  @State private var currency = Locale.current.currency?.identifier ?? "EUR"
+  @State private var currency = String()
   @State private var splittingRate = String()
   @State private var conversionRate = String()
   @State private var customCategory = String()
@@ -159,7 +159,7 @@ extension ExpenseFormView {
       title = expense.title
       amount = expense.amount.toString()!
       currency = expense.currency.code
-      conversionRate = expense.conversionRate.toString()!
+      conversionRate = expense.conversionRate.toString(10)!
       payer = expense.payer.name
       category = expense.category
       splittingRate = expense.splittingRate.toString()!
@@ -168,12 +168,13 @@ extension ExpenseFormView {
     else {
       focusedField = .title
       payer = currentTeam.lastPayer?.name ?? currentTeam.members.first?.name ?? ""
-      conversionRate = String(1)
+      conversionRate = currentTeam.defaultConversionRate.toString(10)!
+      currency = currentTeam.defaultCurrency.code
       splittingRate = (100/Double(currentTeam.members.count)).toString()!
-      guard let _ = defaultSplittingRates.first(where: {$0 == splittingRate}) else {
-        defaultSplittingRates.append(splittingRate)
-        return
-      }
+//      guard let _ = defaultSplittingRates.first(where: {$0 == splittingRate}) else {
+//        defaultSplittingRates.append(splittingRate)
+//        return
+//      }
     }
   }
   

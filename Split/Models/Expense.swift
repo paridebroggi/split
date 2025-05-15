@@ -10,28 +10,28 @@ import SwiftData
 
 @Model
 final class Expense {
-    
+  
   var team: Team?
-    var id = UUID()
-    var date: Date
-    var amount: Double
+  var id = UUID()
+  var date: Date
+  var amount: Double
+  var title: String
+  var payer: Member
+  var currency: Currency
   var conversionRate: Double
-    var title: String
-    var payer: Member
-    var currency: Currency
-    var splittingRate: Double
-    var category: String
-    
+  var splittingRate: Double
+  var category: String
+  
   init(team: Team, date: Date, amount: Double, conversionRate: Double, title: String, payer: Member, currency: Currency, splittingRate: Double, category: String) {
-        self.team = team
-        self.date = date
-        self.amount = amount
-        self.conversionRate = conversionRate
-        self.title = title
-        self.payer = payer
-        self.currency = currency
-        self.splittingRate = splittingRate
-        self.category = category
-    }
-    
+    self.team = team
+    self.date = date
+    self.amount = amount
+    self.conversionRate = conversionRate
+    self.title = title
+    self.payer = payer
+    self.currency = currency
+    self.splittingRate = splittingRate
+    self.category = category
+  }
+  
 }
