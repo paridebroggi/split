@@ -45,7 +45,7 @@ struct Currency: Codable, Identifiable {
         currencies.append(Currency(code: code, name: name, symbol: symbol))
       }
     }
-    return currencies
+    return currencies.sorted(by: {$0.name < $1.name})
   }
   
   static func retrieve(fromCode: String) -> Currency {

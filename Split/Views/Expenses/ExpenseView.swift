@@ -11,23 +11,25 @@ import SwiftData
 struct ExpenseView: View {
   
   @Environment(\.modelContext) private var modelContext
-  @Environment(\.dismiss) private var dismiss
+  @Query(sort: \Team.name) private var teams: [Team]
   
   let expense: Expense?
   
   var body: some View {
     
-    if expense == nil {
-      NavigationView {
-        ExpenseFormView(expense: nil)
-          .navigationTitle("New Expense")
+    if let currentTeam = teams.first(where: { $0.isCurrent }) {
+      if expense == nil {
+        NavigationView {
+          ExpenseFormView(expense: nil, currentTeam: currentTeam)
+            .navigationTitle("New Expense")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+      }
+      else {
+        ExpenseFormView(expense: expense, currentTeam: currentTeam)
+          .navigationTitle("Expense Detail")
           .navigationBarTitleDisplayMode(.inline)
       }
-    }
-    else {
-      ExpenseFormView(expense: expense)
-        .navigationTitle("Expense Detail")
-        .navigationBarTitleDisplayMode(.inline)
     }
   }
 }
@@ -36,34 +38,45 @@ struct ExpenseFormView: View {
   
   @Environment(\.modelContext) private var modelContext
   @Environment(\.dismiss) private var dismiss
-  @Query(sort: \Team.name) private var teams: [Team]
   
   let expense: Expense
+  let currentTeam: Team
   let isNewExpenseCreation: Bool
+  private var defaultSplittingRates: [Double]
   @State private var isFormDisabled: Bool
   
-  init(expense: Expense?) {
+  init(expense: Expense?, currentTeam: Team) {
+    self.currentTeam = currentTeam
+    self.defaultSplittingRates = [Double(100)]
+    var splittingRateValue: Double
     if let expense = expense {
       self.expense = expense
       isNewExpenseCreation = false
+      _title = State(initialValue: expense.title)
+      _amount = State(initialValue: expense.amount.toString()!)
+      _currency = State(initialValue: expense.currency.code)
+      _exchangeRate = State(initialValue: expense.exchangeRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!)
+      _payer = State(initialValue: expense.payer.name)
+      _category = State(initialValue: expense.category)
+      _date = State(initialValue: expense.date)
+      splittingRateValue = expense.splittingRate
     }
     else {
       self.expense = Expense()
       isNewExpenseCreation = true
+      _payer = State(initialValue: currentTeam.lastPayer?.name ?? currentTeam.members.first!.name)
+      _currency = State(initialValue: currentTeam.defaultCurrency.code)
+      _exchangeRate = State(initialValue: currentTeam.defaultExchangeRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!)
+      splittingRateValue = Double(100)/Double(currentTeam.members.count)
     }
-    isFormDisabled = !isNewExpenseCreation
+    self._isFormDisabled = State(initialValue: !isNewExpenseCreation)
+    self._splittingRate = State(initialValue: splittingRateValue.toString()!)
+    self._showExchangeRateField = State(initialValue: currency != currentTeam.defaultCurrency.code)
+    if defaultSplittingRates.contains(splittingRateValue) == false {
+      defaultSplittingRates.append(splittingRateValue)
+    }
   }
   
-  var currentTeam: Team {
-    if isNewExpenseCreation == false {
-      return expense.team!
-    }
-    else {
-      return teams.first(where: { $0.isCurrent })!
-    }
-  }
-  
-  @State private var defaultSplittingRates = [Double(100)]
   @State private var currentIndex = Int(0)
   @State private var amount = String()
   @State private var title = String()
@@ -77,11 +90,11 @@ struct ExpenseFormView: View {
   @State private var errorMessage = String()
   @State private var showError = false
   @State private var formInputChanged = false
-  @State private var showexchangeRateField = false
+  @State private var showExchangeRateField = false
   @FocusState private var focusedField: FocusedField?
   
   enum FocusedField: Int, CaseIterable {
-    case title, amount
+    case title, amount, exchangeRate
   }
   
   var body: some View {
@@ -110,17 +123,27 @@ struct ExpenseFormView: View {
           }
         }
         .onChange(of: currency){
-          showexchangeRateField = currency != currentTeam.defaultCurrency.code
+          showExchangeRateField = currency != currentTeam.defaultCurrency.code
+          if currency == currentTeam.defaultCurrency.code {
+            expense.exchangeRate = Double(1)
+            exchangeRate = expense.exchangeRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!
+          }
+          else {
+            expense.exchangeRate = Double(0)
+            exchangeRate = String()
+            focusedField = .exchangeRate
+          }
         }
         
-        if showexchangeRateField == true {
+        if showExchangeRateField == true {
           HStack{
-            Text("\(Currency.retrieve(fromCode: currentTeam.defaultCurrency.code).code)/\(currency)")
+            Text("Rate \(Currency.retrieve(fromCode: currentTeam.defaultCurrency.code).code)/\(currency)")
             Spacer()
-            TextField(Double(1).toString(minFractionDigits: 6, maxFractionDigits: 6)!, text: $exchangeRate)
+            TextField(expense.exchangeRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!, text: $exchangeRate)
               .keyboardType(.decimalPad)
               .multilineTextAlignment(.trailing)
               .foregroundStyle(isFormDisabled ? Color.secondary.opacity(0.5) : Color.secondary)
+              .focused($focusedField, equals: .exchangeRate)
           }
         }
       }
@@ -183,9 +206,9 @@ struct ExpenseFormView: View {
       }
     }
     
-    .animation(.default, value: showexchangeRateField)
+    .animation(.default, value: showExchangeRateField)
     .onAppear {
-      prefillForm()
+      focusedField = .title
     }
     .alert("Error", isPresented: $showError) {
       Button("OK", role: .cancel) { }
@@ -199,29 +222,6 @@ struct ExpenseFormView: View {
 
 extension ExpenseFormView {
   
-  private func prefillForm() {
-    if isNewExpenseCreation == true {
-      payer = currentTeam.lastPayer?.name ?? currentTeam.members.first!.name
-      currency = currentTeam.defaultCurrency.code
-      splittingRate = (Double(100)/Double(currentTeam.members.count)).toString()!
-      focusedField = .title
-    }
-    else {
-      title = expense.title
-      amount = expense.amount.toString()!
-      currency = expense.currency.code
-      exchangeRate = expense.exchangeRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!
-      payer = expense.payer.name
-      category = expense.category
-      splittingRate = expense.splittingRate.toString()!
-      date = expense.date
-    }
-    let splittingRateValue = splittingRate.toDouble()!
-    if defaultSplittingRates.contains(splittingRateValue) == false {
-      defaultSplittingRates.append(splittingRateValue)
-    }
-  }
-  
   private func goToNextField(offset: Int) {
     currentIndex = (currentIndex + offset) % FocusedField.allCases.count
     focusedField = FocusedField(rawValue: currentIndex)
@@ -234,15 +234,7 @@ extension ExpenseFormView {
       return
     }
     
-    var exchangeRateValue: Double
-    if showexchangeRateField == true {
-      exchangeRateValue = exchangeRate.toDouble() ?? Double(0)
-    }
-    else {
-      exchangeRateValue = currentTeam.defaultExchangeRate
-    }
-    
-    guard exchangeRateValue > 0 else {
+    guard let exchangeRateValue = exchangeRate.toDouble(), exchangeRateValue > 0 else {
       errorMessage = "Please enter a valid conversion rate"
       showError = true
       return
