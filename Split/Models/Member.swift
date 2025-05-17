@@ -21,5 +21,7 @@ final class Member {
     self.balance = balance
     self.profileImage = profileImage
   }
+  
+  init(){}
 }
 

@@ -49,6 +49,6 @@ struct Currency: Codable, Identifiable {
   }
   
   static func retrieve(fromCode: String) -> Currency {
-    return list().first(where: { $0.code == fromCode })!
+    return list().first(where: { $0.code == fromCode }) ?? Currency(code: "EUR", name: "EUR", symbol: "€")
   }
 }

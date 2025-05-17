@@ -19,53 +19,57 @@ struct TeamsView: View {
   let teams: [Team]
   
   var body: some View {
-    NavigationView {
-      
-      List {
-        Section("Current"){
-          ForEach(teams) { team in
-            if team.isCurrent == true {
-              NavigationLink(destination: TeamView(team: team)) {
-                TeamRowView(team: team)
-              }
-            }
-          }
-        }
-        if teams.count > 1 {
-          Section("Other groups"){
+    if teams.isEmpty {
+      TeamView(team: nil)
+    }
+    else {
+      NavigationView {
+        List {
+          Section("Current"){
             ForEach(teams) { team in
-              if team.isCurrent == false {
+              if team.isCurrent == true {
                 NavigationLink(destination: TeamView(team: team)) {
                   TeamRowView(team: team)
                 }
               }
             }
           }
-        }
-      }
-      .navigationTitle("Expense Groups")
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          Button("Done") {
-            dismiss()
+          if teams.count > 1 {
+            Section("Other groups"){
+              ForEach(teams) { team in
+                if team.isCurrent == false {
+                  NavigationLink(destination: TeamView(team: team)) {
+                    TeamRowView(team: team)
+                  }
+                }
+              }
+            }
           }
         }
-        ToolbarItem(placement: .bottomBar) {
-          Button {
-            presentNewTeamView = true
-          } label: {
-            HStack{
-              Image(systemName: "plus.circle.fill").foregroundStyle(.blue)
-              Text("Create new group")
-                .foregroundStyle(.blue)
+        .navigationTitle("Expense Groups")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+          ToolbarItem(placement: .confirmationAction) {
+            Button("Done") {
+              dismiss()
+            }
+          }
+          ToolbarItem(placement: .bottomBar) {
+            Button {
+              presentNewTeamView = true
+            } label: {
+              HStack{
+                Image(systemName: "plus.circle.fill").foregroundStyle(.blue)
+                Text("Create new group")
+                  .foregroundStyle(.blue)
+              }
             }
           }
         }
       }
-    }
-    .sheet(isPresented: $presentNewTeamView) {
-      TeamView(team: nil)
+      .sheet(isPresented: $presentNewTeamView) {
+        TeamView(team: nil)
+      }
     }
   }
 }

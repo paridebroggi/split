@@ -14,18 +14,18 @@ struct ExpenseView: View {
   @Environment(\.dismiss) private var dismiss
   
   var expense: Expense?
-    
+  
   var body: some View {
     
     if expense == nil {
       NavigationView {
-        ExpenseFormView(expense: expense, isFormDisabled: false)
+        ExpenseFormView(expense: nil)
           .navigationTitle("New Expense")
           .navigationBarTitleDisplayMode(.inline)
       }
     }
     else {
-      ExpenseFormView(expense: expense, isFormDisabled: true)
+      ExpenseFormView(expense: expense)
         .navigationTitle("Expense Detail")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -38,10 +38,23 @@ struct ExpenseFormView: View {
   @Environment(\.dismiss) private var dismiss
   @Query(sort: \Team.name) private var teams: [Team]
   
-  var expense: Expense?
+  let expense: Expense!
+  let isNewExpenseCreation: Bool
+  
+  init(expense: Expense?) {
+    if let expense = expense {
+      self.expense = expense
+      isNewExpenseCreation = false
+    }
+    else {
+      self.expense = Expense()
+      isNewExpenseCreation = true
+    }
+    self.isFormDisabled = !isNewExpenseCreation
+  }
   
   var currentTeam: Team {
-    if let expense = expense {
+    if isNewExpenseCreation == false {
       return expense.team!
     }
     else {
@@ -49,7 +62,7 @@ struct ExpenseFormView: View {
     }
   }
   
-  @State var isFormDisabled: Bool
+  @State private var isFormDisabled: Bool
   @State private var defaultSplittingRates = [100.0, 50.0]
   @State private var errorMessage = String()
   @State private var currentIndex = Int(0)
@@ -149,7 +162,7 @@ struct ExpenseFormView: View {
       }
       
       ToolbarItem(placement: .navigationBarTrailing) {
-        if expense == nil {
+        if isNewExpenseCreation == true {
           Button("Done") {
             saveExpense()
           }
@@ -187,17 +200,7 @@ struct ExpenseFormView: View {
 extension ExpenseFormView {
   
   private func prefillForm() {
-    if let expense = expense {
-      title = expense.title
-      amount = expense.amount.toString()!
-      currency = expense.currency.code
-      conversionRate = expense.conversionRate.toString(10)!
-      payer = expense.payer.name
-      category = expense.category
-      splittingRate = expense.splittingRate.toString()!
-      date = expense.date
-    }
-    else {
+    if isNewExpenseCreation == true {
       focusedField = .title
       payer = currentTeam.lastPayer?.name ?? currentTeam.members.first?.name ?? ""
       conversionRate = currentTeam.defaultConversionRate.toString(10)!
@@ -208,6 +211,16 @@ extension ExpenseFormView {
       //        return
       //      }
     }
+    else {
+      title = expense.title
+      amount = expense.amount.toString()!
+      currency = expense.currency.code
+      conversionRate = expense.conversionRate.toString(10)!
+      payer = expense.payer.name
+      category = expense.category
+      splittingRate = expense.splittingRate.toString()!
+      date = expense.date
+    }
   }
   
   private func goToNextField(offset: Int) {
@@ -217,37 +230,27 @@ extension ExpenseFormView {
   
   private func saveExpense() {
     let numberFormatter = NumberFormatter()
-    guard let amountValue = numberFormatter.number(from: amount)?.doubleValue, amountValue > 0,
-          let conversionRateValue = numberFormatter.number(from: conversionRate)?.doubleValue, conversionRateValue > 0 else {
-      errorMessage = "Please enter a valid amount and conversion rate"
+    guard let amountValue = numberFormatter.number(from: amount)?.doubleValue, amountValue > 0 else {
+      errorMessage = "Please enter a valid amount"
       showError = true
       return
     }
-    
-    if let expense = expense {
-      expense.date = date
-      expense.amount = amountValue
-      expense.conversionRate = conversionRateValue
-      expense.title = title
-      expense.payer = currentTeam.members.first(where: { $0.name == payer })!
-      expense.currency = Currency.retrieve(fromCode: currency)
-      expense.splittingRate = splittingRate.toDouble()!
-      expense.category = category
+    guard let conversionRateValue = numberFormatter.number(from: conversionRate)?.doubleValue, conversionRateValue > 0 else {
+      errorMessage = "Please enter a valid conversion rate"
+      showError = true
+      return
     }
-    else {
-      let expense = Expense(
-        team: currentTeam,
-        date: date,
-        amount: amountValue,
-        conversionRate: conversionRateValue,
-        title: title,
-        payer: currentTeam.members.first(where: { $0.name == payer })!,
-        currency: Currency.retrieve(fromCode: currency),
-        splittingRate: splittingRate.toDouble()!,
-        category: category)
-      currentTeam.lastPayer = expense.payer
-      modelContext.insert(expense)
-    }
+    expense.team = currentTeam
+    expense.date = date
+    expense.amount = amountValue
+    expense.conversionRate = conversionRateValue
+    expense.title = title
+    expense.payer = currentTeam.members.first(where: { $0.name == payer })!
+    expense.currency = Currency.retrieve(fromCode: currency)
+    expense.splittingRate = splittingRate.toDouble()!
+    expense.category = category
+    currentTeam.lastPayer = expense.payer
+    modelContext.insert(expense)
     dismiss()
   }
 }

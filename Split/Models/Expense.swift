@@ -13,14 +13,14 @@ final class Expense {
   
   var team: Team?
   var id = UUID()
-  var date: Date
-  var amount: Double
-  var title: String
-  var payer: Member
-  var currency: Currency
-  var conversionRate: Double
-  var splittingRate: Double
-  var category: String
+  var date = Date()
+  var amount = Double.zero
+  var title = String()
+  var payer = Member()
+  var currency = Currency.retrieve(fromCode: Locale.current.identifier)
+  var conversionRate = Double.zero
+  var splittingRate = Double.zero
+  var category = String()
   
   init(team: Team, date: Date, amount: Double, conversionRate: Double, title: String, payer: Member, currency: Currency, splittingRate: Double, category: String) {
     self.team = team
@@ -33,5 +33,7 @@ final class Expense {
     self.splittingRate = splittingRate
     self.category = category
   }
+  
+  init() {}
   
 }
