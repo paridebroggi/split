@@ -11,16 +11,16 @@ import SwiftData
 @Model
 final class Expense {
   
-  var team: Team?
   var id = UUID()
-  var date = Date()
-  var amount = Double.zero
   var title = String()
-  var payer = Member()
+  var amount = Double.zero
   var currency = Currency()
-  var conversionRate = Double.zero
-  var splittingRate = Double.zero
+  var conversionRate = Double(1)
+  var team: Team?
+  var payer = Member()
   var category = String()
+  var splittingRate = Double.zero
+  var date = Date()
   
   init(team: Team, date: Date, amount: Double, conversionRate: Double, title: String, payer: Member, currency: Currency, splittingRate: Double, category: String) {
     self.team = team

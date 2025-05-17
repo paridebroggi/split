@@ -40,6 +40,7 @@ struct ExpenseFormView: View {
   
   let expense: Expense
   let isNewExpenseCreation: Bool
+  @State private var isFormDisabled: Bool
   
   init(expense: Expense?) {
     if let expense = expense {
@@ -62,8 +63,7 @@ struct ExpenseFormView: View {
     }
   }
   
-  @State private var isFormDisabled: Bool
-  @State private var defaultSplittingRates = [100.0, 50.0]
+  @State private var defaultSplittingRates = [Double(100)]
   @State private var currentIndex = Int(0)
   @State private var amount = String()
   @State private var title = String()
@@ -73,7 +73,7 @@ struct ExpenseFormView: View {
   @State private var splittingRate = String()
   @State private var conversionRate = String()
   @State private var customCategory = String()
-  @State private var date: Date = Date()
+  @State private var date = Date()
   @State private var errorMessage = String()
   @State private var showError = false
   @State private var formInputChanged = false
@@ -137,7 +137,7 @@ struct ExpenseFormView: View {
       Section{
         Picker("Splitting", selection: $splittingRate) {
           ForEach(defaultSplittingRates, id: \.self) { rate in
-            Text("\(rate)%").tag(rate)
+            Text("\(rate.toString()!)%").tag(rate.toString()!)
           }
         }
         .pickerStyle(.navigationLink)
@@ -201,15 +201,15 @@ extension ExpenseFormView {
   
   private func prefillForm() {
     if isNewExpenseCreation == true {
-      payer = currentTeam.lastPayer?.name ?? currentTeam.members.first?.name ?? ""
-      focusedField = .title
-      conversionRate = currentTeam.defaultConversionRate.toString(10)!
+      payer = currentTeam.lastPayer?.name ?? currentTeam.members.first!.name
       currency = currentTeam.defaultCurrency.code
-      splittingRate = (100/Double(currentTeam.members.count)).toString()!
-      //      guard let _ = defaultSplittingRates.first(where: {$0 == splittingRate}) else {
-      //        defaultSplittingRates.append(splittingRate)
-      //        return
-      //      }
+      conversionRate = currentTeam.defaultConversionRate.toString(10)!
+      let splittingRateValue = Double(100)/Double(currentTeam.members.count)
+      if defaultSplittingRates.contains(splittingRateValue) == false {
+        defaultSplittingRates.append(splittingRateValue)
+      }
+      splittingRate = splittingRateValue.toString()!
+      focusedField = .title
     }
     else {
       title = expense.title
@@ -219,6 +219,9 @@ extension ExpenseFormView {
       payer = expense.payer.name
       category = expense.category
       splittingRate = expense.splittingRate.toString()!
+      if defaultSplittingRates.contains(expense.splittingRate) == false {
+        defaultSplittingRates.append(expense.splittingRate)
+      }
       date = expense.date
     }
   }
@@ -235,7 +238,7 @@ extension ExpenseFormView {
       showError = true
       return
     }
-    guard let conversionRateValue = numberFormatter.number(from: conversionRate)?.doubleValue, conversionRateValue > 0 else {
+    guard let conversionRateValue = conversionRate.toDouble(), conversionRateValue > 0 else {
       errorMessage = "Please enter a valid conversion rate"
       showError = true
       return
