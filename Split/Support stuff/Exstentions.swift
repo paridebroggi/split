@@ -40,10 +40,10 @@ extension String {
 
 extension Double {
   
-  func toString(_ maxFractionDigits: Int = 2) -> String? {
+  func toString(minFractionDigits: Int = 0, maxFractionDigits: Int = 2) -> String? {
     let formatter = NumberFormatter()
     formatter.locale = Locale.current
-    formatter.minimumFractionDigits = 0
+    formatter.minimumFractionDigits = minFractionDigits
     formatter.maximumFractionDigits = maxFractionDigits
     formatter.numberStyle = .decimal
     return formatter.string(from: NSNumber(value: self))

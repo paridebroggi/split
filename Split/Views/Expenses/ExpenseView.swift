@@ -114,10 +114,15 @@ struct ExpenseFormView: View {
         }
         
         if showConversionRateField == true {
-          TextField("Convertion Rate", text: $conversionRate)
-            .keyboardType(.decimalPad)
+          HStack{
+            Text("Conversion Rate")
+            Spacer().frame(width: 10)
+            TextField("1,000000", text: $conversionRate)
+              .keyboardType(.decimalPad)
+              .multilineTextAlignment(.trailing)
+              .foregroundStyle(isFormDisabled ? Color.secondary.opacity(0.5) : Color.secondary)
+          }
         }
-        
       }
       
       Section {
@@ -203,26 +208,23 @@ extension ExpenseFormView {
     if isNewExpenseCreation == true {
       payer = currentTeam.lastPayer?.name ?? currentTeam.members.first!.name
       currency = currentTeam.defaultCurrency.code
-      conversionRate = currentTeam.defaultConversionRate.toString(10)!
-      let splittingRateValue = Double(100)/Double(currentTeam.members.count)
-      if defaultSplittingRates.contains(splittingRateValue) == false {
-        defaultSplittingRates.append(splittingRateValue)
-      }
-      splittingRate = splittingRateValue.toString()!
+//      conversionRate = currentTeam.defaultConversionRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!
+      splittingRate = (Double(100)/Double(currentTeam.members.count)).toString()!
       focusedField = .title
     }
     else {
       title = expense.title
       amount = expense.amount.toString()!
       currency = expense.currency.code
-      conversionRate = expense.conversionRate.toString(10)!
+      conversionRate = expense.conversionRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!
       payer = expense.payer.name
       category = expense.category
       splittingRate = expense.splittingRate.toString()!
-      if defaultSplittingRates.contains(expense.splittingRate) == false {
-        defaultSplittingRates.append(expense.splittingRate)
-      }
       date = expense.date
+    }
+    let splittingRateValue = splittingRate.toDouble()!
+    if defaultSplittingRates.contains(splittingRateValue) == false {
+      defaultSplittingRates.append(splittingRateValue)
     }
   }
   
@@ -232,26 +234,34 @@ extension ExpenseFormView {
   }
   
   private func saveExpense() {
-    let numberFormatter = NumberFormatter()
-    guard let amountValue = numberFormatter.number(from: amount)?.doubleValue, amountValue > 0 else {
+    guard let amountValue = amount.toDouble(), amountValue > 0 else {
       errorMessage = "Please enter a valid amount"
       showError = true
       return
     }
-    guard let conversionRateValue = conversionRate.toDouble(), conversionRateValue > 0 else {
+    
+    var conversionRateValue: Double
+    if showConversionRateField == true {
+      conversionRateValue = conversionRate.toDouble() ?? Double(0)
+    }
+    else {
+      conversionRateValue = currentTeam.defaultConversionRate
+    }
+    
+    guard conversionRateValue > 0 else {
       errorMessage = "Please enter a valid conversion rate"
       showError = true
       return
     }
-    expense.team = currentTeam
-    expense.date = date
-    expense.amount = amountValue
-    expense.conversionRate = conversionRateValue
     expense.title = title
-    expense.payer = currentTeam.members.first(where: { $0.name == payer })!
+    expense.amount = amountValue
     expense.currency = Currency.retrieve(fromCode: currency)
-    expense.splittingRate = splittingRate.toDouble()!
+    expense.conversionRate = conversionRateValue
+    expense.team = currentTeam
+    expense.payer = currentTeam.members.first(where: { $0.name == payer })!
     expense.category = category
+    expense.splittingRate = splittingRate.toDouble()!
+    expense.date = date
     currentTeam.lastPayer = expense.payer
     modelContext.insert(expense)
     dismiss()
