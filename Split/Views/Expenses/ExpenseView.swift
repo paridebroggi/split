@@ -106,7 +106,7 @@ struct ExpenseFormView: View {
         
         Picker("Currency", selection: $currency) {
           ForEach(Currency.list()){ currency in
-            Text(currency.code).tag(currency.code)
+            Text("\(currency.name) (\(currency.code))").tag(currency.code)
           }
         }
         .onChange(of: currency){
@@ -115,9 +115,9 @@ struct ExpenseFormView: View {
         
         if showConversionRateField == true {
           HStack{
-            Text("Conversion Rate")
-            Spacer().frame(width: 10)
-            TextField("1,000000", text: $conversionRate)
+            Text("\(Currency.retrieve(fromCode: currentTeam.defaultCurrency.code).code)/\(currency)")
+            Spacer()
+            TextField(Double(1).toString(minFractionDigits: 6, maxFractionDigits: 6)!, text: $conversionRate)
               .keyboardType(.decimalPad)
               .multilineTextAlignment(.trailing)
               .foregroundStyle(isFormDisabled ? Color.secondary.opacity(0.5) : Color.secondary)
@@ -167,17 +167,12 @@ struct ExpenseFormView: View {
       }
       
       ToolbarItem(placement: .navigationBarTrailing) {
-        if isNewExpenseCreation == true {
+        if isFormDisabled == false {
           Button("Done") {
             saveExpense()
           }
           .font(.headline)
           .disabled(title.isEmpty || amount.isEmpty)
-        }
-        else if formInputChanged == true {
-          Button("Save") {
-            saveExpense()
-          }
         }
         else {
           Button("Edit") {
@@ -208,7 +203,6 @@ extension ExpenseFormView {
     if isNewExpenseCreation == true {
       payer = currentTeam.lastPayer?.name ?? currentTeam.members.first!.name
       currency = currentTeam.defaultCurrency.code
-//      conversionRate = currentTeam.defaultConversionRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!
       splittingRate = (Double(100)/Double(currentTeam.members.count)).toString()!
       focusedField = .title
     }
