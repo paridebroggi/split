@@ -1,5 +1,5 @@
 //
-//  RecentView.swift
+//  CurrentRecentsView.swift
 //  Split
 //
 //  Created by p on 01/05/2025.
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 
-struct RecentView: View {
+struct CurrentRecentsView: View {
     
     @Environment(\.modelContext) private var modelContext
     @State private var isExpanded = true
@@ -20,10 +20,10 @@ struct RecentView: View {
     
     var body: some View {
         
-        Section("Recent Expenses") {
+        Section("Recents") {
             
             ForEach(expenses.prefix(5)) { expense in
-              NavigationLink(destination: AddNewExpenseView(expense: expense, currentTeam: currentTeam)) {
+              NavigationLink(destination: ExpenseView(expense: expense, currentTeam: currentTeam)) {
                     ExpenseRowView(expense: expense)
                 }
             }

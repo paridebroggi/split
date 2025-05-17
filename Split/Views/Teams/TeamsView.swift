@@ -25,7 +25,7 @@ struct TeamsView: View {
         Section("Current"){
           ForEach(teams) { team in
             if team.isCurrent == true {
-              NavigationLink(destination: AddNewTeamView(teams: teams, team: team)) {
+              NavigationLink(destination: TeamView(teams: teams, team: team)) {
                 TeamRowView(team: team)
               }
             }
@@ -35,7 +35,7 @@ struct TeamsView: View {
           Section("Other groups"){
             ForEach(teams) { team in
               if team.isCurrent == false {
-                NavigationLink(destination: AddNewTeamView(teams: teams, team: team)) {
+                NavigationLink(destination: TeamView(teams: teams, team: team)) {
                   TeamRowView(team: team)
                 }
               }
@@ -65,7 +65,7 @@ struct TeamsView: View {
       }
     }
     .sheet(isPresented: $presentNewTeamView) {
-      AddNewTeamView(teams: teams, team: nil)
+      TeamView(teams: teams, team: nil)
     }
   }
 }

@@ -1,5 +1,5 @@
 //
-//  AddNewTeamView.swift
+//  TeamView.swift
 //  Split
 //
 //  Created by p on 04/05/2025.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct AddNewTeamView: View {
+struct TeamView: View {
   
   let teams: [Team]
   let team: Team?

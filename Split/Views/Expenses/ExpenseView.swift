@@ -1,5 +1,5 @@
 //
-//  AddNewExpenseView.swift
+//  ExpenseView.swift
 //  Split
 //
 //  Created by p on 29/04/2025.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct AddNewExpenseView: View {
+struct ExpenseView: View {
   
   @Environment(\.modelContext) private var modelContext
   @Environment(\.dismiss) private var dismiss
@@ -46,6 +46,6 @@ struct AddNewExpenseView: View {
 }
 
 //#Preview {
-//  AddNewExpenseView()
+//  ExpenseView()
 //    .modelContainer(SampleData.shared.modelContainer)
 //}

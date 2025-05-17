@@ -11,8 +11,8 @@ import SwiftData
 struct HomeView: View {
   
   @Environment(\.modelContext) private var modelContext
-  @State private var presentAddNewExpenseView = false
-  @State private var presentAddNewTeamView = false
+  @State private var presentExpenseView = false
+  @State private var presentTeamView = false
   @State private var presentTeamsView = false
   
   var user: Member?
@@ -30,12 +30,11 @@ struct HomeView: View {
           .padding(24)
         List() {
           if let currentTeam = currentTeam {
-            HeaderView(team: currentTeam)
-            TeamView(team: currentTeam)
-            RecentView(expenses: currentTeam.expenses.sorted(by: { $0.date > $1.date }), currentTeam: currentTeam)
+            CurrentTeamView(team: currentTeam)
+//            CurrentBudgetView(team: currentTeam)
+            CurrentRecentsView(expenses: currentTeam.expenses.sorted(by: { $0.date > $1.date }), currentTeam: currentTeam)
           }
         }
-        .listStyle(.sidebar)
         .navigationTitle(currentTeam?.name ?? "Split")
         .navigationBarTitleDisplayMode(.inline)
       }
@@ -84,7 +83,7 @@ struct HomeView: View {
         
         ToolbarItem(placement: .bottomBar) {
           Button {
-            presentAddNewExpenseView = true
+            presentExpenseView = true
           } label: {
             Image(systemName: "square.and.pencil")
           }
@@ -93,19 +92,19 @@ struct HomeView: View {
     }
     .onAppear {
       if teams.isEmpty == true {
-        presentAddNewTeamView = true
+        presentTeamView = true
       }
     }
     .sheet(isPresented: $presentTeamsView){
       TeamsView(teams: teams)
     }
-    .sheet(isPresented: $presentAddNewExpenseView) {
+    .sheet(isPresented: $presentExpenseView) {
       if let currentTeam = currentTeam {
-        AddNewExpenseView(currentTeam: currentTeam)
+        ExpenseView(currentTeam: currentTeam)
       }
     }
-    .sheet(isPresented: $presentAddNewTeamView){
-      AddNewTeamView(teams: teams, team: nil)
+    .sheet(isPresented: $presentTeamView){
+      TeamView(teams: teams, team: nil)
     }
   }
 }

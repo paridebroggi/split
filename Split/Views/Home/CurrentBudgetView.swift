@@ -1,5 +1,5 @@
 //
-//  BudgetTrackerView.swift
+//  CurrentBudgetView.swift
 //  Split
 //
 //  Created by p on 01/05/2025.
@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-struct BudgetTrackerView: View {
+struct CurrentBudgetView: View {
+  
+  let team: Team
     
     var body: some View {
         
