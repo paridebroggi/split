@@ -87,6 +87,7 @@ struct HomeView: View {
           } label: {
             Image(systemName: "square.and.pencil")
           }
+          .disabled(teams.isEmpty)
         }
       }
     }
