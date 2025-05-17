@@ -39,6 +39,12 @@ struct ImageViewWithPicker: View {
           .aspectRatio(contentMode: .fill)
           .frame(height: 120)
       }
+      else if let imageURL = URL(string: team.coverImage), let image =  UIImage(contentsOfFile: imageURL.absoluteString) {
+        Image(uiImage: image)
+          .resizable()
+          .aspectRatio(contentMode: .fill)
+          .frame(height: 120)
+      }
     }
     .photosPicker(isPresented: $presentImagePicker, selection: $pickedImage, matching: .images)
     .onChange(of: pickedImage) {

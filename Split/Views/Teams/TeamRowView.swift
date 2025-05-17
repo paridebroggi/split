@@ -14,14 +14,6 @@ struct TeamRowView: View {
 
   var body: some View {
         HStack {
-            if team.isCurrent {
-                Image(systemName: "checkmark")
-                    .font(.headline)
-            }
-            else {
-                Spacer().frame(width: 20)
-            }
-            Spacer().frame(width: 16)
             VStack(alignment: .leading, spacing: 4) {
                 Text(team.name)
                     .font(.headline)

@@ -112,10 +112,8 @@ struct ExpenseFormView: View {
             dismiss()
           }
         }
-        }
       }
-    
-    .toolbar {
+      
       ToolbarItem(placement: .navigationBarTrailing) {
         if expense == nil {
           Button("Done") {
@@ -136,8 +134,8 @@ struct ExpenseFormView: View {
           }
         }
       }
-    
     }
+    
     .animation(.default, value: showConversionRateField)
     .onAppear {
       prefillForm()
@@ -171,10 +169,10 @@ extension ExpenseFormView {
       conversionRate = currentTeam.defaultConversionRate.toString(10)!
       currency = currentTeam.defaultCurrency.code
       splittingRate = (100/Double(currentTeam.members.count)).toString()!
-//      guard let _ = defaultSplittingRates.first(where: {$0 == splittingRate}) else {
-//        defaultSplittingRates.append(splittingRate)
-//        return
-//      }
+      //      guard let _ = defaultSplittingRates.first(where: {$0 == splittingRate}) else {
+      //        defaultSplittingRates.append(splittingRate)
+      //        return
+      //      }
     }
   }
   

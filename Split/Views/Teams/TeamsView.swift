@@ -22,15 +22,28 @@ struct TeamsView: View {
     NavigationView {
       
       List {
-        Section(){
+        Section("Current"){
           ForEach(teams) { team in
-            NavigationLink(destination:TeamDetailView(team: team)) {
-              TeamRowView(team: team)
+            if team.isCurrent == true {
+              NavigationLink(destination: AddNewTeamView(teams: teams, team: team)) {
+                TeamRowView(team: team)
+              }
+            }
+          }
+        }
+        if teams.count > 1 {
+          Section("Other groups"){
+            ForEach(teams) { team in
+              if team.isCurrent == false {
+                NavigationLink(destination: AddNewTeamView(teams: teams, team: team)) {
+                  TeamRowView(team: team)
+                }
+              }
             }
           }
         }
       }
-      .navigationTitle("Groups")
+      .navigationTitle("Expense Groups")
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .confirmationAction) {
@@ -44,7 +57,7 @@ struct TeamsView: View {
           } label: {
             HStack{
               Image(systemName: "plus.circle.fill").foregroundStyle(.blue)
-              Text("Create group")
+              Text("Create new group")
                 .foregroundStyle(.blue)
             }
           }
@@ -52,11 +65,10 @@ struct TeamsView: View {
       }
     }
     .sheet(isPresented: $presentNewTeamView) {
-      AddNewTeamView(teams: teams)
+      AddNewTeamView(teams: teams, team: nil)
     }
   }
 }
-
 
 //#Preview {
 //    TeamsView()

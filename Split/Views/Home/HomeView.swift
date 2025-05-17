@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  HomeView.swift
 //  Split
 //
 //  Created by p on 27/04/2025.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ContentView: View {
+struct HomeView: View {
   
   @Environment(\.modelContext) private var modelContext
   @State private var presentAddNewExpenseView = false
@@ -43,9 +43,11 @@ struct ContentView: View {
         if teams.count > 1 {
           ToolbarTitleMenu {
             ForEach(teams){ team in
-              Button(team.name) {
+              Button {
                 currentTeam!.isCurrent.toggle()
                 teams.first(where: { $0.name == team.name })!.isCurrent.toggle()
+              } label: {
+                Label(team.name, systemImage: team.isCurrent ? "checkmark" : "")
               }
             }
           }
@@ -70,14 +72,6 @@ struct ContentView: View {
           label: {
             Image(systemName: "ellipsis.circle")
           }
-        }
-        
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
-              print("Tapped Profile")
-            } label: {
-              Label("Profile", systemImage: "person.crop.circle")
-            }
         }
         
         ToolbarItem(placement: .bottomBar) {
@@ -111,12 +105,12 @@ struct ContentView: View {
       }
     }
     .sheet(isPresented: $presentAddNewTeamView){
-      AddNewTeamView(teams: teams)
+      AddNewTeamView(teams: teams, team: nil)
     }
   }
 }
 
 #Preview {
-  ContentView()
+  HomeView()
     .modelContainer(SampleData.shared.modelContainer)
 }

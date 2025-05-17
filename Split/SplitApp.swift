@@ -13,7 +13,7 @@ struct SplitApp: App {
   
   var body: some Scene {
     WindowGroup {
-      ContentView()
+      HomeView()
     }
     .modelContainer(for: [
       Team.self,
