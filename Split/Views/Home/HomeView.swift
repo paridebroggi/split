@@ -103,7 +103,7 @@ struct HomeView: View {
         ExpenseView()
     }
     .sheet(isPresented: $presentTeamView){
-      TeamView(teams: teams, team: nil)
+      TeamView(team: nil)
     }
   }
 }

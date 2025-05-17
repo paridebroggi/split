@@ -19,13 +19,13 @@ struct ExpenseView: View {
     
     if expense == nil {
       NavigationView {
-        ExpenseFormView(expense: expense, isDisabled: false)
+        ExpenseFormView(expense: expense, isFormDisabled: false)
           .navigationTitle("New Expense")
           .navigationBarTitleDisplayMode(.inline)
       }
     }
     else {
-      ExpenseFormView(expense: expense, isDisabled: true)
+      ExpenseFormView(expense: expense, isFormDisabled: true)
         .navigationTitle("Expense Detail")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -49,7 +49,7 @@ struct ExpenseFormView: View {
     }
   }
   
-  @State var isDisabled: Bool
+  @State var isFormDisabled: Bool
   @State private var defaultSplittingRates = [100.0, 50.0]
   @State private var errorMessage = String()
   @State private var currentIndex = Int(0)
@@ -138,7 +138,7 @@ struct ExpenseFormView: View {
     .onChange(of: focusedField){
       formInputChanged = true
     }
-    .disabled(isDisabled)
+    .disabled(isFormDisabled)
     .toolbar {
       ToolbarItem(placement: .navigationBarLeading) {
         if expense == nil {
@@ -163,7 +163,7 @@ struct ExpenseFormView: View {
         }
         else {
           Button("Edit") {
-            isDisabled = false
+            isFormDisabled = false
             focusedField = .title
           }
         }

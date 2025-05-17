@@ -10,19 +10,18 @@ import SwiftData
 
 struct TeamView: View {
   
-  let teams: [Team]
   let team: Team?
   
   var body: some View {
     
     if let team = team {
-        TeamFormView(teams: teams, team: team)
+        TeamFormView(team: team)
         .navigationTitle("Group Details")
         .navigationBarTitleDisplayMode(.inline)
     }
     else {
       NavigationView(){
-        TeamFormView(teams: teams, team: nil)
+        TeamFormView(team: nil)
           .navigationTitle("New Group")
           .navigationBarTitleDisplayMode(.inline)
       }
@@ -34,6 +33,7 @@ struct TeamFormView: View {
   
   @Environment(\.modelContext) private var modelContext
   @Environment(\.dismiss) private var dismiss
+  @Query(sort: \Team.name) private var teams: [Team]
   
   @State private var teamName = String()
   @State private var currency = Locale.current.currency?.identifier ?? "EUR"
@@ -53,8 +53,7 @@ struct TeamFormView: View {
     case teamName
   }
   
-  let teams: [Team]
-  let team : Team?
+  let team: Team?
   let newTeam = Team()
   
   var body: some View {
