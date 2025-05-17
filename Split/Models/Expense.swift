@@ -15,18 +15,18 @@ final class Expense {
   var title = String()
   var amount = Double.zero
   var currency = Currency()
-  var conversionRate = Double(1)
+  var exchangeRate = Double(1)
   var team: Team?
   var payer = Member()
   var category = String()
   var splittingRate = Double.zero
   var date = Date()
   
-  init(team: Team, date: Date, amount: Double, conversionRate: Double, title: String, payer: Member, currency: Currency, splittingRate: Double, category: String) {
+  init(team: Team, date: Date, amount: Double, exchangeRate: Double, title: String, payer: Member, currency: Currency, splittingRate: Double, category: String) {
     self.team = team
     self.date = date
     self.amount = amount
-    self.conversionRate = conversionRate
+    self.exchangeRate = exchangeRate
     self.title = title
     self.payer = payer
     self.currency = currency

@@ -71,13 +71,13 @@ struct ExpenseFormView: View {
   @State private var category = String("Food") // to be changed
   @State private var currency = String()
   @State private var splittingRate = String()
-  @State private var conversionRate = String()
+  @State private var exchangeRate = String()
   @State private var customCategory = String()
   @State private var date = Date()
   @State private var errorMessage = String()
   @State private var showError = false
   @State private var formInputChanged = false
-  @State private var showConversionRateField = false
+  @State private var showexchangeRateField = false
   @FocusState private var focusedField: FocusedField?
   
   enum FocusedField: Int, CaseIterable {
@@ -110,14 +110,14 @@ struct ExpenseFormView: View {
           }
         }
         .onChange(of: currency){
-          showConversionRateField = currency != currentTeam.defaultCurrency.code
+          showexchangeRateField = currency != currentTeam.defaultCurrency.code
         }
         
-        if showConversionRateField == true {
+        if showexchangeRateField == true {
           HStack{
             Text("\(Currency.retrieve(fromCode: currentTeam.defaultCurrency.code).code)/\(currency)")
             Spacer()
-            TextField(Double(1).toString(minFractionDigits: 6, maxFractionDigits: 6)!, text: $conversionRate)
+            TextField(Double(1).toString(minFractionDigits: 6, maxFractionDigits: 6)!, text: $exchangeRate)
               .keyboardType(.decimalPad)
               .multilineTextAlignment(.trailing)
               .foregroundStyle(isFormDisabled ? Color.secondary.opacity(0.5) : Color.secondary)
@@ -183,7 +183,7 @@ struct ExpenseFormView: View {
       }
     }
     
-    .animation(.default, value: showConversionRateField)
+    .animation(.default, value: showexchangeRateField)
     .onAppear {
       prefillForm()
     }
@@ -210,7 +210,7 @@ extension ExpenseFormView {
       title = expense.title
       amount = expense.amount.toString()!
       currency = expense.currency.code
-      conversionRate = expense.conversionRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!
+      exchangeRate = expense.exchangeRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!
       payer = expense.payer.name
       category = expense.category
       splittingRate = expense.splittingRate.toString()!
@@ -234,15 +234,15 @@ extension ExpenseFormView {
       return
     }
     
-    var conversionRateValue: Double
-    if showConversionRateField == true {
-      conversionRateValue = conversionRate.toDouble() ?? Double(0)
+    var exchangeRateValue: Double
+    if showexchangeRateField == true {
+      exchangeRateValue = exchangeRate.toDouble() ?? Double(0)
     }
     else {
-      conversionRateValue = currentTeam.defaultConversionRate
+      exchangeRateValue = currentTeam.defaultExchangeRate
     }
     
-    guard conversionRateValue > 0 else {
+    guard exchangeRateValue > 0 else {
       errorMessage = "Please enter a valid conversion rate"
       showError = true
       return
@@ -250,7 +250,7 @@ extension ExpenseFormView {
     expense.title = title
     expense.amount = amountValue
     expense.currency = Currency.retrieve(fromCode: currency)
-    expense.conversionRate = conversionRateValue
+    expense.exchangeRate = exchangeRateValue
     expense.team = currentTeam
     expense.payer = currentTeam.members.first(where: { $0.name == payer })!
     expense.category = category

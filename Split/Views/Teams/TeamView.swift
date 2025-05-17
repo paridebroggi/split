@@ -37,8 +37,8 @@ struct TeamFormView: View {
   
   @State private var teamName = String()
   @State private var currency = Locale.current.currency?.identifier ?? "EUR"
-  @State private var conversionRate = String(1)
-  @State private var showConversionRateField = false
+  @State private var exchangeRate = String(1)
+  @State private var showExchangeRateField = false
   @State private var presentNewMemberView = false
   @State private var presentImagePicker = false
   @State private var isSharingEnabled = false
@@ -100,11 +100,11 @@ struct TeamFormView: View {
             }
           }
           .onChange(of: currency){
-            showConversionRateField = currency != team.defaultCurrency.code
+            showExchangeRateField = currency != team.defaultCurrency.code
           }
           
-          if showConversionRateField == true {
-            TextField("Convertion Rate", text: $conversionRate)
+          if showExchangeRateField == true {
+            TextField("Convertion Rate", text: $exchangeRate)
               .keyboardType(.decimalPad)
           }
           
@@ -190,7 +190,7 @@ extension TeamFormView {
     }
     team.name = teamName
     team.defaultCurrency = Currency.retrieve(fromCode: currency)
-    team.defaultConversionRate = conversionRate.toDouble()!
+    team.defaultExchangeRate = exchangeRate.toDouble()!
     team.isCurrent = teams.isEmpty
     modelContext.insert(team)
     dismiss()
