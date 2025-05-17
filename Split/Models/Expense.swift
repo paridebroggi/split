@@ -17,7 +17,7 @@ final class Expense {
   var amount = Double.zero
   var title = String()
   var payer = Member()
-  var currency = Currency.retrieve(fromCode: Locale.current.identifier)
+  var currency = Currency()
   var conversionRate = Double.zero
   var splittingRate = Double.zero
   var category = String()

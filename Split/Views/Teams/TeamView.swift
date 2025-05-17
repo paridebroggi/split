@@ -67,7 +67,6 @@ struct TeamFormView: View {
     }
   }
 
-  
   var body: some View {
     
       Form {

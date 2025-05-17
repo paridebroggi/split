@@ -25,7 +25,7 @@ struct Currency: Codable, Identifiable {
   init() {
     self.code = "EUR"
     self.name = "Euro"
-    self.symbol = "E"
+    self.symbol = "€"
   }
   
   static func list() -> [Currency] {
