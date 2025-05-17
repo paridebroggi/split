@@ -43,7 +43,7 @@ struct TeamFormView: View {
   @State private var presentImagePicker = false
   @State private var isSharingEnabled = false
   @State private var showError = false
-  @State private var errorMessage = ""
+  @State private var errorMessage = String()
   @State private var isBudgetingEnabled = false
   @State private var isDisabled = true
   @State private var formInputChanged = false
@@ -142,7 +142,6 @@ struct TeamFormView: View {
           if isNewTeamCreation == true {
             Button("Done") {
               saveTeam()
-              dismiss()
             }
             .font(.headline)
             //            .disabled(title.isEmpty || amount.isEmpty)
@@ -150,7 +149,6 @@ struct TeamFormView: View {
           else if formInputChanged == true {
             Button("Save") {
               saveTeam()
-              dismiss()
             }
           }
           else {
@@ -164,6 +162,12 @@ struct TeamFormView: View {
       .sheet(isPresented: $presentNewMemberView) {
         AddNewMemberView(team: team)
       }
+      .alert("Error", isPresented: $showError) {
+        Button("OK", role: .cancel) { }
+      }
+      message: {
+        Text(errorMessage)
+      }
     
     
     
@@ -173,11 +177,23 @@ struct TeamFormView: View {
 extension TeamFormView {
    
   private func saveTeam() {
+    
+    guard teamName.isEmpty == false else {
+      errorMessage = "Please enter a valid name"
+      showError = true
+      return
+    }
+    guard team.count > 0 else {
+      errorMessage = "Please add at least one member"
+      showError = true
+      return
+    }
     team.name = teamName
     team.defaultCurrency = Currency.retrieve(fromCode: currency)
     team.defaultConversionRate = conversionRate.toDouble()!
     team.isCurrent = teams.isEmpty
     modelContext.insert(team)
+    dismiss()
   }
   
 }

@@ -64,7 +64,6 @@ struct ExpenseFormView: View {
   
   @State private var isFormDisabled: Bool
   @State private var defaultSplittingRates = [100.0, 50.0]
-  @State private var errorMessage = String()
   @State private var currentIndex = Int(0)
   @State private var amount = String()
   @State private var title = String()
@@ -75,6 +74,7 @@ struct ExpenseFormView: View {
   @State private var conversionRate = String()
   @State private var customCategory = String()
   @State private var date: Date = Date()
+  @State private var errorMessage = String()
   @State private var showError = false
   @State private var formInputChanged = false
   @State private var showConversionRateField = false
@@ -201,8 +201,8 @@ extension ExpenseFormView {
   
   private func prefillForm() {
     if isNewExpenseCreation == true {
-      focusedField = .title
       payer = currentTeam.lastPayer?.name ?? currentTeam.members.first?.name ?? ""
+      focusedField = .title
       conversionRate = currentTeam.defaultConversionRate.toString(10)!
       currency = currentTeam.defaultCurrency.code
       splittingRate = (100/Double(currentTeam.members.count)).toString()!
