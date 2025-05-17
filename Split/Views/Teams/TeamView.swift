@@ -53,8 +53,20 @@ struct TeamFormView: View {
     case teamName
   }
   
-  let team: Team?
-  let newTeam = Team()
+  let team: Team!
+  let isNewTeamCreation: Bool
+  
+  init(team: Team?) {
+    if let team = team {
+      self.team = team
+      isNewTeamCreation = false
+    }
+    else {
+      self.team = Team()
+      isNewTeamCreation = true
+    }
+  }
+
   
   var body: some View {
     
@@ -64,12 +76,12 @@ struct TeamFormView: View {
             .focused($focusedField, equals: .teamName)
         }
         Section(header: Text("Image"), footer: Text("Add a picture that represents the expense group.")) {
-          ImageViewWithPicker(team: team ?? newTeam)
+          ImageViewWithPicker(team: team)
             .listRowInsets(EdgeInsets())
         }
         
         Section("Members"){
-          ForEach(team?.members ?? newTeam.members) { member in
+          ForEach(team.members) { member in
             Text(member.name)
           }
           Button {
@@ -89,7 +101,7 @@ struct TeamFormView: View {
             }
           }
           .onChange(of: currency){
-            showConversionRateField = currency != team?.defaultCurrency.code ?? newTeam.defaultCurrency.code
+            showConversionRateField = currency != team.defaultCurrency.code
           }
           
           if showConversionRateField == true {
@@ -120,7 +132,7 @@ struct TeamFormView: View {
       
       .toolbar {
         ToolbarItem(placement: .navigationBarLeading) {
-          if team == nil {
+          if isNewTeamCreation == true {
             Button("Cancel") {
               dismiss()
             }
@@ -128,7 +140,7 @@ struct TeamFormView: View {
         }
         
         ToolbarItem(placement: .navigationBarTrailing) {
-          if team == nil {
+          if isNewTeamCreation == true {
             Button("Done") {
               saveTeam()
               dismiss()
@@ -151,7 +163,7 @@ struct TeamFormView: View {
         }
       }
       .sheet(isPresented: $presentNewMemberView) {
-        AddNewMemberView(team: team ?? newTeam)
+        AddNewMemberView(team: team)
       }
     
     
@@ -162,19 +174,11 @@ struct TeamFormView: View {
 extension TeamFormView {
    
   private func saveTeam() {
-    var finalTeam: Team
-    
-    if let team = team {
-      finalTeam = team
-    }
-    else {
-      finalTeam = newTeam
-    }
-    finalTeam.name = teamName
-    finalTeam.defaultCurrency = Currency.retrieve(fromCode: currency)
-    finalTeam.defaultConversionRate = conversionRate.toDouble()!
-    finalTeam.isCurrent = teams.isEmpty
-    modelContext.insert(finalTeam)
+    team.name = teamName
+    team.defaultCurrency = Currency.retrieve(fromCode: currency)
+    team.defaultConversionRate = conversionRate.toDouble()!
+    team.isCurrent = teams.isEmpty
+    modelContext.insert(team)
   }
   
 }
