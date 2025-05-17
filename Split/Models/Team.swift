@@ -14,7 +14,10 @@ final class Team {
   var isCurrent = false
   var members = [Member]()
   var lastPayer: Member?
-  @Relationship(deleteRule: .cascade, inverse: \Expense.team) var expenses = [Expense]()
+  
+  @Relationship(deleteRule: .cascade, inverse: \Expense.team)
+  var expenses = [Expense]()
+  
   var sharingCode = String("SHA-0123")
   var coverImage = String()
   var defaultCurrency = Currency.retrieve(fromCode: Locale.current.currency?.identifier ?? "EUR")

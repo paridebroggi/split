@@ -13,7 +13,7 @@ struct ExpenseView: View {
   @Environment(\.modelContext) private var modelContext
   @Environment(\.dismiss) private var dismiss
   
-  var expense: Expense?
+  let expense: Expense?
   
   var body: some View {
     
@@ -38,7 +38,7 @@ struct ExpenseFormView: View {
   @Environment(\.dismiss) private var dismiss
   @Query(sort: \Team.name) private var teams: [Team]
   
-  let expense: Expense!
+  let expense: Expense
   let isNewExpenseCreation: Bool
   
   init(expense: Expense?) {
@@ -50,7 +50,7 @@ struct ExpenseFormView: View {
       self.expense = Expense()
       isNewExpenseCreation = true
     }
-    self.isFormDisabled = !isNewExpenseCreation
+    isFormDisabled = !isNewExpenseCreation
   }
   
   var currentTeam: Team {
@@ -154,7 +154,7 @@ struct ExpenseFormView: View {
     .disabled(isFormDisabled)
     .toolbar {
       ToolbarItem(placement: .navigationBarLeading) {
-        if expense == nil {
+        if isNewExpenseCreation == true {
           Button("Cancel") {
             dismiss()
           }

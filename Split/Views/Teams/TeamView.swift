@@ -53,7 +53,7 @@ struct TeamFormView: View {
     case teamName
   }
   
-  let team: Team!
+  let team: Team
   let isNewTeamCreation: Bool
   
   init(team: Team?) {
