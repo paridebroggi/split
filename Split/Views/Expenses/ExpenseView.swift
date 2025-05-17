@@ -47,7 +47,7 @@ struct ExpenseFormView: View {
   
   init(expense: Expense?, currentTeam: Team) {
     self.currentTeam = currentTeam
-    self.defaultSplittingRates = [Double(100)]
+    self.defaultSplittingRates = [Double(100), Double(100)/Double(currentTeam.members.count)]
     var splittingRateValue: Double
     if let expense = expense {
       self.expense = expense
