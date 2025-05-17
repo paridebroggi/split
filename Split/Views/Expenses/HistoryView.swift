@@ -27,7 +27,7 @@ struct HistoryView: View {
         
         List(){
             ForEach(searchResults) { expense in
-              NavigationLink(destination: ExpenseView(expense: expense, currentTeam: expense.team!)) {
+              NavigationLink(destination: ExpenseView(expense: expense)) {
                     ExpenseRowView(expense: expense)
                 }
             }

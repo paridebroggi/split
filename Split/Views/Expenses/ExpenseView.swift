@@ -14,19 +14,18 @@ struct ExpenseView: View {
   @Environment(\.dismiss) private var dismiss
   
   var expense: Expense?
-  let currentTeam: Team
     
   var body: some View {
     
     if expense == nil {
       NavigationView {
-        ExpenseFormView(expense: expense, currentTeam: currentTeam, isDisabled: false)
+        ExpenseFormView(expense: expense, isDisabled: false)
           .navigationTitle("New Expense")
           .navigationBarTitleDisplayMode(.inline)
       }
     }
     else {
-      ExpenseFormView(expense: expense, currentTeam: currentTeam, isDisabled: true)
+      ExpenseFormView(expense: expense, isDisabled: true)
         .navigationTitle("Expense Detail")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -37,9 +36,19 @@ struct ExpenseFormView: View {
   
   @Environment(\.modelContext) private var modelContext
   @Environment(\.dismiss) private var dismiss
+  @Query(sort: \Team.name) private var teams: [Team]
   
   var expense: Expense?
-  let currentTeam: Team
+  
+  var currentTeam: Team {
+    if let expense = expense {
+      return expense.team!
+    }
+    else {
+      return teams.first(where: { $0.isCurrent })!
+    }
+  }
+  
   @State var isDisabled: Bool
   @State private var defaultSplittingRates = [100.0, 50.0]
   @State private var errorMessage = String()

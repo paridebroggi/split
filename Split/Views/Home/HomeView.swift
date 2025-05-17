@@ -32,7 +32,7 @@ struct HomeView: View {
           if let currentTeam = currentTeam {
             CurrentTeamView(team: currentTeam)
 //            CurrentBudgetView(team: currentTeam)
-            CurrentRecentsView(expenses: currentTeam.expenses.sorted(by: { $0.date > $1.date }), currentTeam: currentTeam)
+            CurrentRecentsView(expenses: currentTeam.expenses.sorted(by: { $0.date > $1.date }))
           }
         }
         .navigationTitle(currentTeam?.name ?? "Split")
@@ -99,9 +99,7 @@ struct HomeView: View {
       TeamsView(teams: teams)
     }
     .sheet(isPresented: $presentExpenseView) {
-      if let currentTeam = currentTeam {
-        ExpenseView(currentTeam: currentTeam)
-      }
+        ExpenseView()
     }
     .sheet(isPresented: $presentTeamView){
       TeamView(teams: teams, team: nil)

@@ -15,15 +15,13 @@ struct CurrentRecentsView: View {
     @State private var isExpanded = true
      
     let expenses: [Expense]
-    let currentTeam: Team
-    
     
     var body: some View {
         
         Section("Recents") {
             
             ForEach(expenses.prefix(5)) { expense in
-              NavigationLink(destination: ExpenseView(expense: expense, currentTeam: currentTeam)) {
+              NavigationLink(destination: ExpenseView(expense: expense)) {
                     ExpenseRowView(expense: expense)
                 }
             }
