@@ -142,7 +142,6 @@ struct ExpenseFormView: View {
             Text("1 \(Currency.retrieve(fromCode: currentTeam.defaultCurrency.code).symbol) = \(Currency.retrieve(fromCode: currency).symbol)")
             Spacer()
             TextField(expense.exchangeRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!, text: $exchangeRate)
-              .lineLimit(2)
               .keyboardType(.decimalPad)
               .multilineTextAlignment(.trailing)
               .foregroundStyle(isFormDisabled ? Color.secondary.opacity(0.5) : Color.secondary)
