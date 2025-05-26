@@ -66,7 +66,7 @@ struct ExpenseFormView: View {
       isNewExpenseCreation = true
       _payer = State(initialValue: currentTeam.lastPayer?.name ?? currentTeam.members.first!.name)
       _currency = State(initialValue: currentTeam.defaultCurrency.code)
-      _exchangeRate = State(initialValue: currentTeam.defaultExchangeRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!)
+      _exchangeRate = State(initialValue: String(1))
       splittingRateValue = Double(100)/Double(currentTeam.members.count)
     }
     self._isFormDisabled = State(initialValue: !isNewExpenseCreation)
@@ -134,12 +134,15 @@ struct ExpenseFormView: View {
             focusedField = .exchangeRate
           }
         }
+      }
         
-        if showExchangeRateField == true {
+      if showExchangeRateField == true {
+        Section("Exchange rate"){
           HStack{
-            Text("Rate \(Currency.retrieve(fromCode: currentTeam.defaultCurrency.code).code)/\(currency)")
+            Text("1 \(Currency.retrieve(fromCode: currentTeam.defaultCurrency.code).symbol) = \(Currency.retrieve(fromCode: currency).symbol)")
             Spacer()
             TextField(expense.exchangeRate.toString(minFractionDigits: 6, maxFractionDigits: 6)!, text: $exchangeRate)
+              .lineLimit(2)
               .keyboardType(.decimalPad)
               .multilineTextAlignment(.trailing)
               .foregroundStyle(isFormDisabled ? Color.secondary.opacity(0.5) : Color.secondary)
@@ -147,6 +150,7 @@ struct ExpenseFormView: View {
           }
         }
       }
+        
       
       Section {
         Picker("Payer", selection: $payer) {

@@ -37,8 +37,6 @@ struct TeamFormView: View {
   
   @State private var teamName = String()
   @State private var currency = Locale.current.currency?.identifier ?? "EUR"
-  @State private var exchangeRate = String(1)
-  @State private var showExchangeRateField = false
   @State private var presentNewMemberView = false
   @State private var presentImagePicker = false
   @State private var isSharingEnabled = false
@@ -96,18 +94,9 @@ struct TeamFormView: View {
         Section(header: Text("Settings")) {
           Picker("Currency", selection: $currency) {
             ForEach(Currency.list()){ currency in
-              Text(currency.code).tag(currency.code)
+              Text("\(currency.name) (\(currency.code))").tag(currency.code)
             }
           }
-          .onChange(of: currency){
-            showExchangeRateField = currency != team.defaultCurrency.code
-          }
-          
-          if showExchangeRateField == true {
-            TextField("Convertion Rate", text: $exchangeRate)
-              .keyboardType(.decimalPad)
-          }
-          
           Toggle("Enable budgeting", isOn: $isBudgetingEnabled)
         }
         
@@ -190,7 +179,6 @@ extension TeamFormView {
     }
     team.name = teamName
     team.defaultCurrency = Currency.retrieve(fromCode: currency)
-    team.defaultExchangeRate = exchangeRate.toDouble()!
     team.isCurrent = teams.isEmpty
     modelContext.insert(team)
     dismiss()

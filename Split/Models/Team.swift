@@ -21,8 +21,6 @@ final class Team {
   var sharingCode = String("SHA-0123")
   var coverImage = String()
   var defaultCurrency = Currency.retrieve(fromCode: Locale.current.currency?.identifier ?? "EUR")
-  var defaultExchangeRate = Double(1)
-  var defaultSplittingRate: [Double] = [100]
   
   var count: Int {
     return members.count
