@@ -111,11 +111,14 @@ struct ExpenseFormView: View {
       }
       
       Section {
-        TextField("Amount", text: $amount)
-          .focused($focusedField, equals: .amount)
-          .keyboardType(.decimalPad)
-          .onSubmit {
-          }
+        HStack {
+          Text("Amount")
+          Spacer()
+          TextField("0", text: $amount)
+            .focused($focusedField, equals: .amount)
+            .keyboardType(.decimalPad)
+            .multilineTextAlignment(.trailing)
+        }
         
         Picker("Currency", selection: $currency) {
           ForEach(Currency.list()){ currency in
