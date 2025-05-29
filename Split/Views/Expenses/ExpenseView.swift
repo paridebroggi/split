@@ -65,7 +65,7 @@ struct ExpenseFormView: View {
       isNewExpenseCreation = true
       self.expense = Expense()
       _title = State(initialValue: self.expense.title)
-      _amount = State(initialValue: self.expense.amount.toString()!)
+      _amount = State(initialValue: String())
       _category = State(initialValue: self.expense.category)
       _date = State(initialValue: self.expense.date)
       _payer = State(initialValue: currentTeam.lastPayer?.name ?? currentTeam.members.first!.name)

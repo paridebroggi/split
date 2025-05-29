@@ -181,7 +181,7 @@ extension TeamFormView {
     }
     team.name = teamName
     team.defaultCurrency = Currency.retrieve(fromCode: currency)
-    team.isCurrent = teams.isEmpty
+    team.isCurrent = isNewTeamCreation ? teams.isEmpty : team.isCurrent
     team.isBudgetingEnabled = isBudgetingEnabled
     modelContext.insert(team)
     dismiss()
