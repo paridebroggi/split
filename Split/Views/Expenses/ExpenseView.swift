@@ -50,8 +50,8 @@ struct ExpenseFormView: View {
     self.defaultSplittingRates = [Double(100), Double(100)/Double(currentTeam.members.count)]
     var splittingRateValue: Double
     if let expense = expense {
-      self.expense = expense
       isNewExpenseCreation = false
+      self.expense = expense
       _title = State(initialValue: expense.title)
       _amount = State(initialValue: expense.amount.toString()!)
       _currency = State(initialValue: expense.currency.code)
@@ -62,11 +62,15 @@ struct ExpenseFormView: View {
       splittingRateValue = expense.splittingRate
     }
     else {
-      self.expense = Expense()
       isNewExpenseCreation = true
+      self.expense = Expense()
+      _title = State(initialValue: self.expense.title)
+      _amount = State(initialValue: self.expense.amount.toString()!)
+      _category = State(initialValue: self.expense.category)
+      _date = State(initialValue: self.expense.date)
       _payer = State(initialValue: currentTeam.lastPayer?.name ?? currentTeam.members.first!.name)
       _currency = State(initialValue: currentTeam.defaultCurrency.code)
-      _exchangeRate = State(initialValue: String(1))
+      _exchangeRate = State(initialValue: self.expense.exchangeRate.toString()!)
       splittingRateValue = Double(100)/Double(currentTeam.members.count)
     }
     self._isFormDisabled = State(initialValue: !isNewExpenseCreation)
@@ -78,15 +82,15 @@ struct ExpenseFormView: View {
   }
   
   @State private var currentIndex = Int(0)
-  @State private var amount = String()
-  @State private var title = String()
-  @State private var payer = String()
-  @State private var category = String("Food") // to be changed
-  @State private var currency = String()
-  @State private var splittingRate = String()
-  @State private var exchangeRate = String()
-  @State private var customCategory = String()
-  @State private var date = Date()
+  @State private var title: String
+  @State private var amount: String
+  @State private var category: String
+  @State private var date: Date
+  @State private var payer: String
+  @State private var currency: String
+  @State private var splittingRate: String
+  @State private var exchangeRate: String
+  
   @State private var errorMessage = String()
   @State private var showError = false
   @State private var showExchangeRateField = false
@@ -137,7 +141,7 @@ struct ExpenseFormView: View {
           }
         }
       }
-        
+      
       if showExchangeRateField == true {
         Section("Exchange rate"){
           HStack{
@@ -151,7 +155,7 @@ struct ExpenseFormView: View {
           }
         }
       }
-        
+      
       
       Section {
         Picker("Payer", selection: $payer) {

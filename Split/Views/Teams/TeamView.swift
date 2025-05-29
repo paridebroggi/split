@@ -15,7 +15,7 @@ struct TeamView: View {
   var body: some View {
     
     if let team = team {
-        TeamFormView(team: team)
+      TeamFormView(team: team)
         .navigationTitle("Group Details")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -58,107 +58,107 @@ struct TeamFormView: View {
     if let team = team {
       isNewTeamCreation = false
       self.team = team
-      self._teamName = State(initialValue: team.name)
-      self._currency = State(initialValue: team.defaultCurrency.code)
-      self._isBudgetingEnabled = State(initialValue: team.isBudgetingEnabled)
+      _teamName = State(initialValue: team.name)
+      _currency = State(initialValue: team.defaultCurrency.code)
+      _isBudgetingEnabled = State(initialValue: team.isBudgetingEnabled)
     }
     else {
       isNewTeamCreation = true
       self.team = Team()
-      self._teamName = State(initialValue: self.team.name)
-      self._currency = State(initialValue: self.team.defaultCurrency.code)
-      self._isBudgetingEnabled = State(initialValue: self.team.isBudgetingEnabled)
+      _teamName = State(initialValue: self.team.name)
+      _currency = State(initialValue: self.team.defaultCurrency.code)
+      _isBudgetingEnabled = State(initialValue: self.team.isBudgetingEnabled)
     }
     self._isFormDisabled = State(initialValue: !isNewTeamCreation)
   }
-
+  
   var body: some View {
     
-      Form {
-        Section(header: Text("Name")){
-          TextField("Family, Holidays, Friends...", text: $teamName)
-            .focused($focusedField, equals: .teamName)
+    Form {
+      Section(header: Text("Name")){
+        TextField("Family, Holidays, Friends...", text: $teamName)
+          .focused($focusedField, equals: .teamName)
+      }
+      Section(header: Text("Image"), footer: Text("Add a picture that represents the expense group.")) {
+        ImageViewWithPicker(team: team)
+          .listRowInsets(EdgeInsets())
+      }
+      
+      Section("Members"){
+        ForEach(team.members) { member in
+          Text(member.name)
         }
-        Section(header: Text("Image"), footer: Text("Add a picture that represents the expense group.")) {
-          ImageViewWithPicker(team: team)
-            .listRowInsets(EdgeInsets())
-        }
-        
-        Section("Members"){
-          ForEach(team.members) { member in
-            Text(member.name)
-          }
-          Button {
-            presentNewMemberView = true
-          } label: {
-            HStack{
-              Image(systemName: "plus.circle.fill")
-              Text("Add Member")
-            }
-          }
-        }
-        
-        Section(header: Text("Settings")) {
-          Picker("Currency", selection: $currency) {
-            ForEach(Currency.list()){ currency in
-              Text("\(currency.name) (\(currency.code))").tag(currency.code)
-            }
-          }
-          Toggle("Budgeting", isOn: $isBudgetingEnabled)
-        }
-        
-        Section(header: Text("Sharing"), footer: isSharingEnabled == true ? Text("Share this code to let other people join the group.") : nil){
-          Toggle("Share expense group", isOn: $isSharingEnabled)
-          if isSharingEnabled == true {
-            HStack {
-              Spacer()
-              Button("XEVJ2093") {
-                print("share button tapped")
-              }
-              Spacer()
-            }
+        Button {
+          presentNewMemberView = true
+        } label: {
+          HStack{
+            Image(systemName: "plus.circle.fill")
+            Text("Add Member")
           }
         }
       }
-      .animation(.default, value: isSharingEnabled)
-      .onAppear() {
-        focusedField = .teamName
-      }
-      .disabled(isFormDisabled)
-      .toolbar {
-        ToolbarItem(placement: .navigationBarLeading) {
-          if isNewTeamCreation == true {
-            Button("Cancel") {
-              dismiss()
-            }
+      
+      Section(header: Text("Settings")) {
+        Picker("Currency", selection: $currency) {
+          ForEach(Currency.list()){ currency in
+            Text("\(currency.name) (\(currency.code))").tag(currency.code)
           }
         }
-        
-        ToolbarItem(placement: .navigationBarTrailing) {
-          if isFormDisabled == false {
-            Button("Done") {
-              saveTeam()
+        Toggle("Budgeting", isOn: $isBudgetingEnabled)
+      }
+      
+      Section(header: Text("Sharing"), footer: isSharingEnabled == true ? Text("Share this code to let other people join the group.") : nil){
+        Toggle("Share expense group", isOn: $isSharingEnabled)
+        if isSharingEnabled == true {
+          HStack {
+            Spacer()
+            Button("XEVJ2093") {
+              print("share button tapped")
             }
-            .font(.headline)
-            .disabled(teamName.isEmpty)
-          }
-          else {
-            Button("Edit") {
-              isFormDisabled = false
-              focusedField = .teamName
-            }
+            Spacer()
           }
         }
       }
-      .sheet(isPresented: $presentNewMemberView) {
-        AddNewMemberView(team: team)
+    }
+    .animation(.default, value: isSharingEnabled)
+    .onAppear() {
+      focusedField = .teamName
+    }
+    .disabled(isFormDisabled)
+    .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) {
+        if isNewTeamCreation == true {
+          Button("Cancel") {
+            dismiss()
+          }
+        }
       }
-      .alert("Error", isPresented: $showError) {
-        Button("OK", role: .cancel) { }
+      
+      ToolbarItem(placement: .navigationBarTrailing) {
+        if isFormDisabled == false {
+          Button("Done") {
+            saveTeam()
+          }
+          .font(.headline)
+          .disabled(teamName.isEmpty)
+        }
+        else {
+          Button("Edit") {
+            isFormDisabled = false
+            focusedField = .teamName
+          }
+        }
       }
-      message: {
-        Text(errorMessage)
-      }
+    }
+    .sheet(isPresented: $presentNewMemberView) {
+      AddNewMemberView(team: team)
+    }
+    .alert("Error", isPresented: $showError) {
+      Button("OK", role: .cancel) { }
+    }
+    message: {
+      Text(errorMessage)
+    }
     
     
     
@@ -166,7 +166,7 @@ struct TeamFormView: View {
 }
 
 extension TeamFormView {
-   
+  
   private func saveTeam() {
     
     guard teamName.isEmpty == false else {

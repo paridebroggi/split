@@ -18,7 +18,7 @@ final class Expense {
   var exchangeRate = Double(1)
   var team: Team?
   var payer = Member()
-  var category = String()
+  var category = categories.first ?? String()
   var splittingRate = Double.zero
   var date = Date()
   
@@ -34,6 +34,6 @@ final class Expense {
     self.category = category
   }
   
-  init() {}
+  init(){ }
   
 }
