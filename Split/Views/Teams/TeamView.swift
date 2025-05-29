@@ -35,15 +35,15 @@ struct TeamFormView: View {
   @Environment(\.dismiss) private var dismiss
   @Query(sort: \Team.name) private var teams: [Team]
   
-  @State private var teamName = String()
-  @State private var currency = Locale.current.currency?.identifier ?? "EUR"
+  @State private var teamName: String
+  @State private var currency: String
+  @State private var isBudgetingEnabled: Bool
   @State private var presentNewMemberView = false
   @State private var presentImagePicker = false
   @State private var isSharingEnabled = false
   @State private var showError = false
   @State private var errorMessage = String()
-  @State private var isBudgetingEnabled = false
-  @State private var isDisabled = true
+  @State private var isFormDisabled = true
   @State private var formInputChanged = false
   @FocusState private var focusedField: FocusedField?
   
@@ -56,13 +56,21 @@ struct TeamFormView: View {
   
   init(team: Team?) {
     if let team = team {
-      self.team = team
       isNewTeamCreation = false
+      self.team = team
+      self._teamName = State(initialValue: team.name)
+      self._currency = State(initialValue: team.defaultCurrency.code)
+      self._isBudgetingEnabled = State(initialValue: team.isBudgetingEnabled)
     }
     else {
-      self.team = Team()
       isNewTeamCreation = true
+      self.team = Team()
+      self._teamName = State(initialValue: self.team.name)
+      self._currency = State(initialValue: self.team.defaultCurrency.code)
+      self._isBudgetingEnabled = State(initialValue: self.team.isBudgetingEnabled)
+
     }
+    self._isFormDisabled = State(initialValue: !isNewTeamCreation)
   }
 
   var body: some View {
@@ -97,7 +105,7 @@ struct TeamFormView: View {
               Text("\(currency.name) (\(currency.code))").tag(currency.code)
             }
           }
-          Toggle("Enable budgeting", isOn: $isBudgetingEnabled)
+          Toggle("Budgeting", isOn: $isBudgetingEnabled)
         }
         
         Section(header: Text("Sharing"), footer: isSharingEnabled == true ? Text("Share this code to let other people join the group.") : nil){
@@ -135,14 +143,9 @@ struct TeamFormView: View {
             .font(.headline)
             //            .disabled(title.isEmpty || amount.isEmpty)
           }
-          else if formInputChanged == true {
-            Button("Save") {
-              saveTeam()
-            }
-          }
           else {
             Button("Edit") {
-              isDisabled = false
+              isFormDisabled = false
               //              focusedField = .title
             }
           }
@@ -180,6 +183,7 @@ extension TeamFormView {
     team.name = teamName
     team.defaultCurrency = Currency.retrieve(fromCode: currency)
     team.isCurrent = teams.isEmpty
+    team.isBudgetingEnabled = isBudgetingEnabled
     modelContext.insert(team)
     dismiss()
   }

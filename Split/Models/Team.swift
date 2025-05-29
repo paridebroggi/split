@@ -4,21 +4,22 @@
 //
 //  Created by p on 30/04/2025.
 //
+
 import Foundation
 import SwiftData
 
 @Model
 final class Team {
   var id = UUID()
-  var name = String("Sample Group")
+  var name = String()
   var isCurrent = false
   var members = [Member]()
   var lastPayer: Member?
   
   @Relationship(deleteRule: .cascade, inverse: \Expense.team)
   var expenses = [Expense]()
-  
   var sharingCode = String("SHA-0123")
+  var isBudgetingEnabled = false
   var coverImage = String()
   var defaultCurrency = Currency.retrieve(fromCode: Locale.current.currency?.identifier ?? "EUR")
   
