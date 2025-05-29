@@ -68,7 +68,6 @@ struct TeamFormView: View {
       self._teamName = State(initialValue: self.team.name)
       self._currency = State(initialValue: self.team.defaultCurrency.code)
       self._isBudgetingEnabled = State(initialValue: self.team.isBudgetingEnabled)
-
     }
     self._isFormDisabled = State(initialValue: !isNewTeamCreation)
   }
@@ -125,7 +124,7 @@ struct TeamFormView: View {
       .onAppear() {
         focusedField = .teamName
       }
-      
+      .disabled(isFormDisabled)
       .toolbar {
         ToolbarItem(placement: .navigationBarLeading) {
           if isNewTeamCreation == true {
@@ -136,17 +135,17 @@ struct TeamFormView: View {
         }
         
         ToolbarItem(placement: .navigationBarTrailing) {
-          if isNewTeamCreation == true {
+          if isFormDisabled == false {
             Button("Done") {
               saveTeam()
             }
             .font(.headline)
-            //            .disabled(title.isEmpty || amount.isEmpty)
+            .disabled(teamName.isEmpty)
           }
           else {
             Button("Edit") {
               isFormDisabled = false
-              //              focusedField = .title
+              focusedField = .teamName
             }
           }
         }

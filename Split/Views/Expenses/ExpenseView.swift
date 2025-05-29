@@ -89,7 +89,6 @@ struct ExpenseFormView: View {
   @State private var date = Date()
   @State private var errorMessage = String()
   @State private var showError = false
-  @State private var formInputChanged = false
   @State private var showExchangeRateField = false
   @FocusState private var focusedField: FocusedField?
   
@@ -181,9 +180,6 @@ struct ExpenseFormView: View {
         DatePicker("Date", selection: $date, displayedComponents: [.date, .hourAndMinute])
           .datePickerStyle(.compact)
       }
-    }
-    .onChange(of: focusedField){
-      formInputChanged = true
     }
     .disabled(isFormDisabled)
     .toolbar {
